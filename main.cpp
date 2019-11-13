@@ -1,6 +1,10 @@
 #include <iostream>
 
+using namespace std;
+
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    cout << "Welcome to CPP-CHESS" << endl;
+
     return 0;
 }
