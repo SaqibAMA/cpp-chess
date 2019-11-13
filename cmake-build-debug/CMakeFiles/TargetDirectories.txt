@@ -1,0 +1,3 @@
+D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/cmake-build-debug/CMakeFiles/cpp_chess.dir
+D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/cmake-build-debug/CMakeFiles/rebuild_cache.dir
