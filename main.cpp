@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <conio.h>
 #include <windows.h>
+#include <ctime>
 
 using namespace std;
 
@@ -35,9 +36,9 @@ void printBoard(int board[][8]) {
         (k == 65)? cout << endl : cout << "-";
 
     // Printing the board
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0, row = 8; i < 8; i++, row--) {
         SetConsoleTextAttribute(h, 10);
-        cout << setw(CELL_WIDTH) << i + 1 << setw(CELL_WIDTH) << " ";
+        cout << setw(CELL_WIDTH) << row << setw(CELL_WIDTH) << " ";
         SetConsoleTextAttribute(h, 15);
         cout << "|";
 
@@ -63,13 +64,20 @@ void printBoard(int board[][8]) {
 
 }
 
-void movePiece(){
+bool chessCordToIndex(char cord[], int &x, int &y) {
 
+    // Function to convert chess coordinates to array coordinates
+    // Returns false if the cell location is invalid
 
+    if ((cord[0] >= 'a' && cord[0] <= 'h') && (cord[1] >= '1' && cord[1] <= '8')) {
 
+        x = cord[0] - 97;
+        y = 8 - (cord[1] - 48);
+        return true;
+    }
+
+    return false;
 }
-
-
 
 int main() {
 
@@ -85,6 +93,7 @@ int main() {
     };
 
     printBoard(board);
+
 
     getch();
     return 0;
