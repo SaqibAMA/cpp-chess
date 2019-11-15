@@ -9,4 +9,10 @@
 D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/main.cpp
 iostream
 -
+fstream
+-
+iomanip
+-
+conio.h
+-
 
