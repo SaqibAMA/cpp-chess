@@ -79,6 +79,8 @@ bool chessCordToIndex(char cord[], int &x, int &y) {
     return false;
 }
 
+
+
 int main() {
 
     int board[8][8] = {
@@ -94,6 +96,27 @@ int main() {
 
     printBoard(board);
 
+    while (true) {
+        char srcCell[3];
+        char destCell[3];
+
+        cout << endl << endl;
+        cout << "Enter cell to select: ";
+        cin >> srcCell;
+        cout << "Enter destination cell: ";
+        cin >> destCell;
+
+        int srcX, srcY, destX, destY;
+
+        chessCordToIndex(srcCell, srcX, srcY);
+        chessCordToIndex(destCell, destX, destY);
+
+        board[destY][destX] = board[srcY][srcX];
+        board[srcY][srcX] = ' ';
+
+        cout << endl;
+        printBoard(board);
+    }
 
     getch();
     return 0;
