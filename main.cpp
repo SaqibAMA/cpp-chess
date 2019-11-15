@@ -1,9 +1,8 @@
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <conio.h>
 #include <windows.h>
-#include <ctime>
+#include <cwchar>
 
 using namespace std;
 
@@ -152,6 +151,10 @@ int main() {
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
+    gotoxy(80, 0 + moveCounter);
+    cout << ":: RECENT MOVES ::" << endl;
+    gotoxy(0, 0);
+
     while (true && moveCounter < INT_MAX) {
 
         printBoard(board);
@@ -201,6 +204,9 @@ int main() {
 
                 moveCounter++;
 
+                gotoxy(80, 1 + moveCounter);
+                cout << srcCell << " to "<< destCell;
+
                 //printBoard(board);
         }
         else {
@@ -209,6 +215,7 @@ int main() {
 
         gotoxy(0, 0);
     }
+
 
     getch();
     return 0;
