@@ -43,7 +43,19 @@ void printBoard(int board[][8]) {
         cout << "|";
 
         for (int j = 0; j < 8; j++) {
-            cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+            if (board[i][j] < 0) {
+                SetConsoleTextAttribute(h, 15 | 7);
+                cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+                SetConsoleTextAttribute(h, 15);
+            }
+            else if (board[i][j] > 0) {
+                SetConsoleTextAttribute(h, 0 | 15);
+                cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+                SetConsoleTextAttribute(h, 15);
+            }
+            else
+                cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+
             cout << setw(CELL_WIDTH) << "|";
         }
         cout << endl;
@@ -79,7 +91,21 @@ bool chessCordToIndex(char cord[], int &x, int &y) {
     return false;
 }
 
+bool isEmpty(int destCell) {
 
+    // Checks if the cell is empty
+
+    return (destCell == 0);
+
+}
+
+bool hasSamePiece(int srcCell, int destCell) {
+
+    // Checks if the destination cell has the same piece
+
+    return (srcCell < 0 && destCell < 0) || (srcCell > 0 && destCell > 0);
+
+}
 
 int main() {
 
@@ -105,17 +131,23 @@ int main() {
         cin >> srcCell;
         cout << "Enter destination cell: ";
         cin >> destCell;
+        cout << endl;
 
         int srcX, srcY, destX, destY;
 
-        chessCordToIndex(srcCell, srcX, srcY);
-        chessCordToIndex(destCell, destX, destY);
 
-        board[destY][destX] = board[srcY][srcX];
-        board[srcY][srcX] = ' ';
+        if ((chessCordToIndex(srcCell, srcX, srcY) &&  chessCordToIndex(destCell, destX, destY)) &&
+        !isEmpty(board[srcY][srcX]) &&
+        !hasSamePiece(board[srcY][srcX], board[destY][destX])) {
+                board[destY][destX] = board[srcY][srcX];
+                board[srcY][srcX] = 0;
+                printBoard(board);
+        }
+        else {
+            cout << "Invalid move.";
+        }
 
         cout << endl;
-        printBoard(board);
     }
 
     getch();
