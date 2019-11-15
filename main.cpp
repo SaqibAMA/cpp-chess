@@ -11,6 +11,11 @@ using namespace std;
 
 char printPiece(int pieceCode) {
 
+    /*
+     * This function takes an integer from the board array
+     * and returns the character associated with it.
+     */
+
     char wPieces[7] = {'r', 'n', 'b', 'q', 'k', 'p'};
     char bPieces[7] = {'R', 'N', 'B', 'Q', 'K', 'P'};
 
@@ -25,6 +30,11 @@ char printPiece(int pieceCode) {
 }
 
 void printBoard(int board[][8]) {
+
+    /*
+     * This function prints the current state of board
+     * whenever it is called.
+     */
 
     // Handler for printing in color
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -44,19 +54,26 @@ void printBoard(int board[][8]) {
 
         for (int j = 0; j < 8; j++) {
             if (board[i][j] < 0) {
-                SetConsoleTextAttribute(h, 15 | 7);
+                SetConsoleTextAttribute(h, 0 | BACKGROUND_GREEN | BACKGROUND_RED);
                 cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+                cout << setw(CELL_WIDTH / 2) << "   ";
                 SetConsoleTextAttribute(h, 15);
             }
             else if (board[i][j] > 0) {
-                SetConsoleTextAttribute(h, 0 | 15);
+                SetConsoleTextAttribute(h, 0 | BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_INTENSITY);
                 cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+                cout << setw(CELL_WIDTH / 2) << "   ";
                 SetConsoleTextAttribute(h, 15);
             }
-            else
+            else {
+                if(((j+i)%2) - 1 == 0)
+                    SetConsoleTextAttribute(h, 15 | BACKGROUND_GREEN);
                 cout << setw(CELL_WIDTH) << printPiece(board[i][j]);
+                cout << setw(CELL_WIDTH / 2) << "   ";
+                SetConsoleTextAttribute(h, 15);
+            }
 
-            cout << setw(CELL_WIDTH) << "|";
+            cout /*<< setw(CELL_WIDTH / 2)*/ << "|";
         }
         cout << endl;
         // Printing the bottom line
@@ -81,7 +98,7 @@ bool chessCordToIndex(char cord[], int &x, int &y) {
     // Function to convert chess coordinates to array coordinates
     // Returns false if the cell location is invalid
 
-    if ((cord[0] >= 'a' && cord[0] <= 'h') && (cord[1] >= '1' && cord[1] <= '8')) {
+    if ((cord[0] >= 'a' && cord[0] <= 'h') && (cord[1] >= '1' && cord[1] <= '8') && (cord[2] == '\0')) {
 
         x = cord[0] - 97;
         y = 8 - (cord[1] - 48);
@@ -107,6 +124,17 @@ bool hasSamePiece(int srcCell, int destCell) {
 
 }
 
+void gotoxy(int x, int y) {
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD scrn;
+
+    scrn.X = x, scrn.Y = y;
+
+    SetConsoleCursorPosition(h,scrn);
+
+}
+
 int main() {
 
     int board[8][8] = {
@@ -120,18 +148,47 @@ int main() {
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
 
-    printBoard(board);
+    int moveCounter = 0;
 
-    while (true) {
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    while (true && moveCounter < INT_MAX) {
+
+        printBoard(board);
+
         char srcCell[3];
         char destCell[3];
 
         cout << endl << endl;
-        cout << "Enter cell to select: ";
-        cin >> srcCell;
-        cout << "Enter destination cell: ";
-        cin >> destCell;
-        cout << endl;
+
+        /*This segment handles the input for moves.*/
+        if(moveCounter > 0) {
+
+            /*Printing these in black to cover up the previous
+            input due to cursor re-positioning.*/
+            SetConsoleTextAttribute(h, 0);
+            gotoxy(19, 19);
+            cout << "\n:: Enter cell to select: " << srcCell << endl;
+            cout << ":: Enter destination cell: " << destCell << endl;
+
+
+            // Printing these in white
+            gotoxy(19, 19);
+            SetConsoleTextAttribute(h, 15);
+            cout << "\n:: Enter cell to select: ";
+            cin >> srcCell;
+            cout << ":: Enter destination cell: ";
+            cin >> destCell;
+            cout << endl;
+
+        }
+        else {
+            // Taking input for the first time
+            cout << "\n:: Enter cell to select: ";
+            cin >> srcCell;
+            cout << ":: Enter destination cell: ";
+            cin >> destCell;
+        }
 
         int srcX, srcY, destX, destY;
 
@@ -141,13 +198,16 @@ int main() {
         !hasSamePiece(board[srcY][srcX], board[destY][destX])) {
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
-                printBoard(board);
+
+                moveCounter++;
+
+                //printBoard(board);
         }
         else {
             cout << "Invalid move.";
         }
 
-        cout << endl;
+        gotoxy(0, 0);
     }
 
     getch();
