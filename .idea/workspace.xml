@@ -13,7 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="aada5b0b-ad55-4aac-b605-b12e2928321e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/CXX.includecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" afterDir="false" />
@@ -78,7 +77,7 @@
       <option name="presentableId" value="Default" />
       <updated>1573685085712</updated>
       <workItem from="1573685087473" duration="3856000" />
-      <workItem from="1573796295304" duration="34170000" />
+      <workItem from="1573796295304" duration="42063000" />
     </task>
     <servers />
   </component>

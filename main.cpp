@@ -134,6 +134,100 @@ void gotoxy(int x, int y) {
 
 }
 
+bool inCheck(int board[][8], int pieceCode, int destX, int destY) {
+
+    // Checking if a pawn puts king in check
+
+    return board[destY - 1][destX + 1] == -5 || board[destY - 1][destX - 1] == -5;
+
+}
+
+bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn) {
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    if (turn == 0) {
+        // Pawn Logic
+
+        if (board[srcY][srcX] == 6) {
+
+            int maxStep;
+
+            if (srcY == 6) {
+                maxStep = 2;
+            }
+            else {
+                maxStep = 1;
+            }
+
+            if (srcX == destX && (srcY - destY) <= maxStep && (srcY - destY) > 0) {
+                board[destY][destX] = board[srcY][srcX];
+                board[srcY][srcX] = 0;
+                if(inCheck(board, board[srcX][srcY], destX, destY)) {
+                    gotoxy(102, 2);
+
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "BLACK IN CHECK" << endl;
+                    SetConsoleTextAttribute(h, 15);
+                    gotoxy(0, 0);
+                }
+                else {
+                    gotoxy(102, 2);
+
+                    SetConsoleTextAttribute(h, 0);
+                    cout << "BLACK IN CHECK" << endl;
+                    SetConsoleTextAttribute(h, 15);
+
+                    gotoxy(0, 0);
+                }
+                return true;
+            }
+            else if (((srcX == destX - 1) || (srcX == destX + 1)) &&
+                    (srcY - destY) == 1 &&
+                    !isEmpty(board[destY][destX])) {
+
+                board[destY][destX] = board[srcY][srcX];
+                board[srcY][srcX] = 0;
+
+                if(inCheck(board, board[srcX][srcY], destX, destY)) {
+                    gotoxy(102, 2);
+
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "BLACK IN CHECK" << endl;
+                    SetConsoleTextAttribute(h, 15);
+                    gotoxy(0, 0);
+                }
+                else {
+                    gotoxy(102, 2);
+
+                    SetConsoleTextAttribute(h, 0);
+                    cout << "BLACK IN CHECK" << endl;
+                    SetConsoleTextAttribute(h, 15);
+
+                    gotoxy(0, 0);
+                }
+
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }
+
+
+        //turn = 1;
+    }
+    else if (turn == 1) {
+        board[destY][destX] = board[srcY][srcX];
+        board[srcY][srcX] = 0;
+
+        turn = 0;
+    }
+
+    return true;
+}
+
 int main() {
 
     int board[8][8] = {
@@ -148,14 +242,18 @@ int main() {
     };
 
     int moveCounter = 0;
+    int turn = 0;   // Keeps a track of the current player turn
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
     gotoxy(80, 0 + moveCounter);
     cout << ":: RECENT MOVES ::" << endl;
+
+    gotoxy(100, 0);
+    cout << ":: GAME STATUS ::" << endl;
     gotoxy(0, 0);
 
-    while (true && moveCounter < INT_MAX) {
+    while (moveCounter < INT_MAX) {
 
         printBoard(board);
 
@@ -198,16 +296,13 @@ int main() {
 
         if ((chessCordToIndex(srcCell, srcX, srcY) &&  chessCordToIndex(destCell, destX, destY)) &&
         !isEmpty(board[srcY][srcX]) &&
-        !hasSamePiece(board[srcY][srcX], board[destY][destX])) {
-                board[destY][destX] = board[srcY][srcX];
-                board[srcY][srcX] = 0;
+        !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
+        movePiece(board, srcX, srcY, destX, destY, turn)) {
 
                 moveCounter++;
 
-                gotoxy(80, 1 + moveCounter);
+                gotoxy(82, 1 + moveCounter);
                 cout << srcCell << " to "<< destCell;
-
-                //printBoard(board);
         }
         else {
             cout << "Invalid move.";
