@@ -142,44 +142,48 @@ bool inCheck(int board[][8], int pieceCode, int destX, int destY) {
 
 }
 
+bool kingInCheck(int board[][8]) {
+
+    // finding king
+
+    bool kingFound = false;
+    int kingLocY = 0, kingLocX = 4;
+
+    for (int i = 0; i < 8 && !kingFound; i++) {
+        for (int j = 0; j < 8 && !kingFound; j++) {
+
+            kingFound = (board[i][j] == -5);
+            kingLocY = i;
+            kingLocX = j;
+
+        }
+    }
+
+    // Checking for check by pawn
+    return (board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6);
+
+}
+
 bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn) {
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
     if (turn == 0) {
+
         // Pawn Logic
 
         if (board[srcY][srcX] == 6) {
 
-            int maxStep;
+            int maxStep = (srcY == 6) + 1;
 
-            if (srcY == 6) {
-                maxStep = 2;
-            }
-            else {
-                maxStep = 1;
-            }
+            if (isEmpty(board[srcY - 1][srcX]) &&
+            srcX == destX &&
+            (srcY - destY) <= maxStep &&
+            (srcY - destY) > 0) {
 
-            if (srcX == destX && (srcY - destY) <= maxStep && (srcY - destY) > 0) {
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
-                if(inCheck(board, board[srcX][srcY], destX, destY)) {
-                    gotoxy(102, 2);
 
-                    SetConsoleTextAttribute(h, FOREGROUND_RED);
-                    cout << "BLACK IN CHECK" << endl;
-                    SetConsoleTextAttribute(h, 15);
-                    gotoxy(0, 0);
-                }
-                else {
-                    gotoxy(102, 2);
-
-                    SetConsoleTextAttribute(h, 0);
-                    cout << "BLACK IN CHECK" << endl;
-                    SetConsoleTextAttribute(h, 15);
-
-                    gotoxy(0, 0);
-                }
                 return true;
             }
             else if (((srcX == destX - 1) || (srcX == destX + 1)) &&
@@ -188,24 +192,6 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
-
-                if(inCheck(board, board[srcX][srcY], destX, destY)) {
-                    gotoxy(102, 2);
-
-                    SetConsoleTextAttribute(h, FOREGROUND_RED);
-                    cout << "BLACK IN CHECK" << endl;
-                    SetConsoleTextAttribute(h, 15);
-                    gotoxy(0, 0);
-                }
-                else {
-                    gotoxy(102, 2);
-
-                    SetConsoleTextAttribute(h, 0);
-                    cout << "BLACK IN CHECK" << endl;
-                    SetConsoleTextAttribute(h, 15);
-
-                    gotoxy(0, 0);
-                }
 
                 return true;
             }
@@ -225,7 +211,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         turn = 0;
     }
 
-    return true;
+    return false;
 }
 
 int main() {
@@ -294,15 +280,34 @@ int main() {
         int srcX, srcY, destX, destY;
 
 
-        if ((chessCordToIndex(srcCell, srcX, srcY) &&  chessCordToIndex(destCell, destX, destY)) &&
+        if ((chessCordToIndex(srcCell, srcX, srcY) &&
+        chessCordToIndex(destCell, destX, destY)) &&
         !isEmpty(board[srcY][srcX]) &&
         !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
         movePiece(board, srcX, srcY, destX, destY, turn)) {
 
-                moveCounter++;
+            moveCounter++;
 
-                gotoxy(82, 1 + moveCounter);
-                cout << srcCell << " to "<< destCell;
+            if(kingInCheck(board)) {
+                gotoxy(102, 2);
+
+                SetConsoleTextAttribute(h, FOREGROUND_RED);
+                cout << "BLACK IN CHECK" << endl;
+                SetConsoleTextAttribute(h, 15);
+                gotoxy(0, 0);
+            }
+            else {
+                gotoxy(102, 2);
+
+                SetConsoleTextAttribute(h, 0);
+                cout << "BLACK IN CHECK" << endl;
+                SetConsoleTextAttribute(h, 15);
+
+                gotoxy(0, 0);
+            }
+
+            gotoxy(82, 1 + moveCounter);
+            cout << srcCell << " to "<< destCell;
         }
         else {
             cout << "Invalid move.";
