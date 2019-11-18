@@ -162,7 +162,7 @@ bool kingInCheck(int board[][8]) {
         return true;
     }
 
-    // Checking for check by rook (front)
+    // Checking for check by rook & queen (front)
     int i = 1;
     bool isInCheck = false;
 
@@ -176,7 +176,7 @@ bool kingInCheck(int board[][8]) {
 
     }
 
-    // Checking for check by rook (back)
+    // Checking for check by rook & queen(back)
     i = 1;
     while (kingLocY - i >= 0 && !isInCheck) {
 
@@ -188,7 +188,7 @@ bool kingInCheck(int board[][8]) {
 
     }
 
-    // Checking for check by rook (right)
+    // Checking for check by rook & queen (right)
     i = 1;
     while (kingLocX + i < 8 && !isInCheck) {
 
@@ -200,7 +200,7 @@ bool kingInCheck(int board[][8]) {
 
     }
 
-    // Checking for check by rook (left)
+    // Checking for check by rook & queen (left)
     i = 1;
     while (kingLocX - i >= 0 && !isInCheck) {
 
