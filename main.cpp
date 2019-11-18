@@ -134,14 +134,6 @@ void gotoxy(int x, int y) {
 
 }
 
-bool inCheck(int board[][8], int pieceCode, int destX, int destY) {
-
-    // Checking if a pawn puts king in check
-
-    return board[destY - 1][destX + 1] == -5 || board[destY - 1][destX - 1] == -5;
-
-}
-
 bool kingInCheck(int board[][8]) {
 
     // finding king
@@ -160,7 +152,116 @@ bool kingInCheck(int board[][8]) {
     }
 
     // Checking for check by pawn
-    return (board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6);
+    if ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6)) {
+        return true;
+    } // Checking for check by knight
+    else if ((board[kingLocY + 2][kingLocX + 1] == 2) || (board[kingLocY + 2][kingLocX - 1] == 2) ||
+            (board[kingLocY - 2][kingLocX + 1] == 2) || (board[kingLocY - 2][kingLocX - 1] == 2) ||
+            (board[kingLocY - 1][kingLocX + 2] == 2) || (board[kingLocY + 1][kingLocX + 2] == 2) ||
+            (board[kingLocY - 1][kingLocX - 2] == 2) || (board[kingLocY + 1][kingLocX - 2] == 2)) {
+        return true;
+    }
+
+    // Checking for check by rook (front)
+    int i = 1;
+    bool isInCheck = false;
+
+    while (kingLocY + i < 8 && !isInCheck) {
+
+        if (board[kingLocY + i][kingLocX] == 1 || board[kingLocY + i][kingLocX] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    // Checking for check by rook (back)
+    i = 1;
+    while (kingLocY - i >= 0 && !isInCheck) {
+
+        if (board[kingLocY - i][kingLocX] == 1 || board[kingLocY - i][kingLocX] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    // Checking for check by rook (right)
+    i = 1;
+    while (kingLocX + i < 8 && !isInCheck) {
+
+        if (board[kingLocY][kingLocX + i] == 1 || board[kingLocY][kingLocX + i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    // Checking for check by rook (left)
+    i = 1;
+    while (kingLocX - i >= 0 && !isInCheck) {
+
+        if (board[kingLocY][kingLocX - i] == 1 || board[kingLocY][kingLocX - i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    if (isInCheck) return isInCheck;
+
+    // Checking for check by bishop and queen (bottom right)
+    i = 1;
+    while ((kingLocY + i < 8 || kingLocX + i < 8) && !isInCheck) {
+
+        if (board[kingLocY + i][kingLocX + i] == 3 || board[kingLocY + i][kingLocX + i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    // Checking for check by bishop & queen (bottom left)
+    i = 1;
+    while ((kingLocY + i < 8 || kingLocX - i >= 0) && !isInCheck) {
+
+        if (board[kingLocY + i][kingLocX - i] == 3 || board[kingLocY + i][kingLocX - i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+    }
+
+    // Checking for check by bishop & queen (top right)
+    i = 1;
+    while ((kingLocY - i >= 0 || kingLocX + i < 8) && !isInCheck) {
+
+        if (board[kingLocY - i][kingLocX + i] == 3 || board[kingLocY - i][kingLocX + i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    // Checking for check by bishop & queen (top left)
+    i = 1;
+    while ((kingLocY - i >= 0 || kingLocX - i >= 0) && !isInCheck) {
+
+        if (board[kingLocY - i][kingLocX - i] == 3 || board[kingLocY - i][kingLocX - i] == 4) {
+            isInCheck = true;
+        }
+
+        i++;
+
+    }
+
+    if (isInCheck) return isInCheck;
 
 }
 
@@ -218,11 +319,11 @@ int main() {
 
     int board[8][8] = {
             {-1,-2,-3,-4,-5,-3,-2,-1},
-            {-6,-6,-6,-6,-6,-6,-6,-6},
+            {-6,-6,-6,-6,0,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
