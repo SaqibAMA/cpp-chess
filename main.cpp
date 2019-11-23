@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <conio.h>
 #include <windows.h>
-#include <cwchar>
+#include <fstream>
 
 using namespace std;
 
@@ -136,6 +136,13 @@ void gotoxy(int x, int y) {
 
 bool kingInCheck(int board[][8]) {
 
+    // Error tracking file
+
+    ofstream errorLog;
+    errorLog.open("errorLog.txt");
+
+    errorLog << "Program Log\n\n";
+
     // finding king
 
     bool kingFound = false;
@@ -155,18 +162,18 @@ bool kingInCheck(int board[][8]) {
     if ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6)) {
         return true;
     } // Checking for check by knight
-    else if ((board[kingLocY + 2][kingLocX + 1] == 2) || (board[kingLocY + 2][kingLocX - 1] == 2) ||
+    /*else if ((board[kingLocY + 2][kingLocX + 1] == 2) || (board[kingLocY + 2][kingLocX - 1] == 2) ||
             (board[kingLocY - 2][kingLocX + 1] == 2) || (board[kingLocY - 2][kingLocX - 1] == 2) ||
             (board[kingLocY - 1][kingLocX + 2] == 2) || (board[kingLocY + 1][kingLocX + 2] == 2) ||
             (board[kingLocY - 1][kingLocX - 2] == 2) || (board[kingLocY + 1][kingLocX - 2] == 2)) {
         return true;
-    }
+    }*/
 
     // Checking for check by rook & queen (front)
     int i = 1;
     bool isInCheck = false;
 
-    while (kingLocY + i < 8 && !isInCheck) {
+    /*while (kingLocY + i < 8 && !isInCheck && board[kingLocY + i][kingLocX] <= 0) {
 
         if (board[kingLocY + i][kingLocX] == 1 || board[kingLocY + i][kingLocX] == 4) {
             isInCheck = true;
@@ -175,7 +182,6 @@ bool kingInCheck(int board[][8]) {
         i++;
 
     }
-
     // Checking for check by rook & queen(back)
     i = 1;
     while (kingLocY - i >= 0 && !isInCheck) {
@@ -211,8 +217,6 @@ bool kingInCheck(int board[][8]) {
         i++;
 
     }
-
-    if (isInCheck) return isInCheck;
 
     // Checking for check by bishop and queen (bottom right)
     i = 1;
@@ -259,10 +263,10 @@ bool kingInCheck(int board[][8]) {
 
         i++;
 
-    }
+    }*/
 
-    if (isInCheck) return isInCheck;
-
+    errorLog << "Value: " << isInCheck << endl;
+    return isInCheck;
 }
 
 bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn) {
@@ -301,6 +305,37 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
             }
 
         }
+        // End of pawn logic.
+        // Start of knight logic
+        else if (board[srcY][srcX] == 2) {
+
+            if (board[destY][destX] <= 0) {
+
+                if (
+                        (destY == srcY + 1 && destX == srcX + 2) ||
+                        (destY == srcY - 1 && destX == srcX + 2) ||
+
+                        (destY == srcY + 1 && destX == srcX - 2) ||
+                        (destY == srcY - 1 && destX == srcX - 2) ||
+
+                        (destY == srcY - 2 && destX == srcX + 1) ||
+                        (destY == srcY - 2 && destX == srcX - 1) ||
+
+                        (destY == srcY + 2 && destX == srcX + 1) ||
+                        (destY == srcY + 2 && destX == srcX - 1)) {
+
+                    board[destY][destX] = board[srcY][srcX];
+                    board[srcY][srcX] = 0;
+                    return true;
+
+                }
+                else {
+                    return false;
+                }
+
+            }
+
+        }
 
 
         //turn = 1;
@@ -319,11 +354,11 @@ int main() {
 
     int board[8][8] = {
             {-1,-2,-3,-4,-5,-3,-2,-1},
-            {-6,-6,-6,-6,0,-6,-6,-6},
+            {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
@@ -371,7 +406,17 @@ int main() {
 
         }
         else {
+
+            /*Printing these in black to cover up the previous
+            input due to cursor re-positioning.*/
+            SetConsoleTextAttribute(h, 0);
+            gotoxy(19, 19);
+            cout << "\n:: Enter cell to select:      " << endl;
+            cout << ":: Enter destination cell:      " << endl;
+
             // Taking input for the first time
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(19, 19);
             cout << "\n:: Enter cell to select: ";
             cin >> srcCell;
             cout << ":: Enter destination cell: ";
@@ -389,7 +434,8 @@ int main() {
 
             moveCounter++;
 
-            if(kingInCheck(board)) {
+            /*if(kingInCheck(board)) {
+
                 gotoxy(102, 2);
 
                 SetConsoleTextAttribute(h, FOREGROUND_RED);
@@ -405,7 +451,7 @@ int main() {
                 SetConsoleTextAttribute(h, 15);
 
                 gotoxy(0, 0);
-            }
+            }*/
 
             gotoxy(82, 1 + moveCounter);
             cout << srcCell << " to "<< destCell;
