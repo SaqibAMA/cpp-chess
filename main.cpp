@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <windows.h>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -334,6 +335,94 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
                 }
 
             }
+
+        }
+        // end of knight logic
+        // start of rook logic
+        else if (board[srcY][srcX] == 1) {
+
+            bool isValidMove = false;
+
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                    ((srcX == destX) && (srcY + i == destY)) ||
+                    ((srcX == destX) && (srcY - i == destY)) ||
+                    ((srcY == destY) && (srcX + i == destX)) ||
+                    ((srcY == destY) && (srcX - i == destX))
+                    ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
+
+            if(isValidMove) {
+
+                bool canMove = true;
+
+                if (srcX == destX) {
+
+                    // The movement is vertical ^ or v
+
+                    if (destY < srcY) {
+
+                        for (int i = 1; i < abs(srcY - destY) && canMove; i++) {
+                            if (!isEmpty(board[srcY - i][srcX])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                    else if (destY > srcY) {
+
+                        for (int i = 1; i < abs(srcY - destY) && canMove; i++) {
+                            if (!isEmpty(board[srcY + i][srcX])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                }
+                else if (srcY == destY) {
+
+                    // The movement is horizontal <-->
+
+                    if (destX < srcX) {
+
+                        for (int i = 1; i < abs(srcX - destX) && canMove; i++) {
+                            if (!isEmpty(board[srcY][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                    else if (destX > srcX) {
+
+                        for (int i = 1; i < abs(srcX - destX) && canMove; i++) {
+                            if (!isEmpty(board[srcY][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+
+                }
+
+                if (canMove) {
+                    board[destY][destX] = board[srcY][srcX];
+                    board[srcY][srcX] = 0;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+
 
         }
 

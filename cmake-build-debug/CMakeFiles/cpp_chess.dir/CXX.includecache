@@ -17,4 +17,6 @@ windows.h
 -
 fstream
 -
+string
+-
 
