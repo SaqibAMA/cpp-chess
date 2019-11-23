@@ -425,6 +425,84 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
 
         }
+        // end of rook logic
+        // start of bishop logic
+        else if (board[srcY][srcX] == 3) {
+
+
+            bool isValidMove = false;
+
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                        ((srcX - i == destX) && (srcY - i == destY)) ||
+                        ((srcX + i == destX) && (srcY - i == destY)) ||
+                        ((srcX - i == destX) && (srcY + i == destY)) ||
+                        ((srcX + i == destX) && (srcY + i == destY))
+                        ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
+
+            if(isValidMove) {
+
+                bool canMove = true;
+
+                if (destY < srcY) {
+
+                    if (destX < srcX) {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY - i][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY - i][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+
+                }
+                else if (destY > srcY) {
+
+                    if (destX < srcX) {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY + i][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY + i][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+
+                }
+
+                if (canMove) {
+                    board[destY][destX] = board[srcY][srcX];
+                    board[srcY][srcX] = 0;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+
+
+        }
 
 
         //turn = 1;
