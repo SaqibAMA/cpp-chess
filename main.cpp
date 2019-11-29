@@ -1069,6 +1069,27 @@ void replayGame(int board[][8]) {
     }
 }
 
+void saveGame(char fileName[], int board[][8]) {
+
+    // add functionality to save board
+
+    ofstream saveMoves;
+    saveMoves.open(strcat(fileName, ".txt"));
+
+    ifstream moveLog;
+    moveLog.open("currentGameMoves.txt");
+
+    char ch;
+
+    while (!moveLog.eof()) {
+
+        ch = moveLog.get();
+        saveMoves << ch;
+
+    }
+
+}
+
 int main() {
 
     int board[8][8] = {
