@@ -4,6 +4,8 @@
 #include <windows.h>
 #include <fstream>
 #include <string>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -384,7 +386,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         // start of rook logic
         else if (board[srcY][srcX] == 1) {
 
-            bool isValidMove = false;
+            bool isValidMove;
 
             isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
 
@@ -460,7 +462,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         else if (board[srcY][srcX] == 3) {
 
 
-            bool isValidMove = false;
+            bool isValidMove;
 
             isValidMove = (abs(srcX - destX) == abs(srcY - destY));
 
@@ -644,7 +646,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         }
         else if (board[srcY][srcX] == 5) {
 
-            bool isValidMove = false;
+            bool isValidMove;
 
             isValidMove = (abs(srcX - destX) == 1 && abs(srcY - destY) == 1)
                     ||(srcX == destX && abs(srcY - destY) == 1)
@@ -729,7 +731,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
             // start of rook logic
         else if (board[srcY][srcX] == -1) {
 
-            bool isValidMove = false;
+            bool isValidMove;
 
             isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
 
@@ -805,7 +807,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         else if (board[srcY][srcX] == -3) {
 
 
-            bool isValidMove = false;
+            bool isValidMove;
 
             isValidMove = (abs(srcX - destX) == abs(srcY - destY));
 
@@ -1012,6 +1014,61 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
     return false;
 }
 
+void replayGame(int board[][8]) {
+
+    ifstream moves;
+    moves.open("sampleReplay.txt");
+
+    char srcCell[3];
+    char destCell[3];
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    int srcX, srcY, destX, destY;
+    int turn = 0;
+    int moveCounter = 0;
+    bool endOfMoves = false;
+
+    while(!moves.eof()) {
+
+        printBoard(board);
+
+        srcCell[0] = moves.get();
+        srcCell[1] = moves.get();
+        srcCell[2] = '\0';
+
+        destCell[0] = moves.get();
+        destCell[1] = moves.get();
+        destCell[2] = '\0';
+
+        moves.get();    // To remove next line character
+
+        gotoxy(0, 0);
+
+        if ((chessCordToIndex(srcCell, srcX, srcY) &&
+             chessCordToIndex(destCell, destX, destY)) &&
+            !isEmpty(board[srcY][srcX]) &&
+            !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
+            movePiece(board, srcX, srcY, destX, destY, turn)) {
+
+            moveCounter++;
+            turn = (moveCounter % 2);
+
+        }
+        else {
+            gotoxy(4, 25);
+
+            SetConsoleTextAttribute(h, FOREGROUND_RED);
+            cout << "INVALID MOVE" << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+        }
+
+        this_thread::sleep_for(chrono::milliseconds(800));
+
+    }
+}
+
 int main() {
 
     int board[8][8] = {
@@ -1056,17 +1113,15 @@ int main() {
             input due to cursor re-positioning.*/
             SetConsoleTextAttribute(h, 0);
             gotoxy(19, 19);
-            cout << "\n:: Enter cell to select: " << srcCell << endl;
-            cout << ":: Enter destination cell: " << destCell << endl;
+            cout << "\n:: >> " << srcCell << " " << destCell << endl;
+            cout << destCell;
 
 
             // Printing these in white
             gotoxy(19, 19);
             SetConsoleTextAttribute(h, 15);
-            cout << "\n:: Enter cell to select: ";
-            cin >> srcCell;
-            cout << ":: Enter destination cell: ";
-            cin >> destCell;
+            cout << "\n:: >> ";
+            cin >> srcCell >> destCell;
             cout << endl;
 
         }
@@ -1076,16 +1131,14 @@ int main() {
             input due to cursor re-positioning.*/
             SetConsoleTextAttribute(h, 0);
             gotoxy(19, 19);
-            cout << "\n:: Enter cell to select:      " << endl;
-            cout << ":: Enter destination cell:      " << endl;
+            cout << "\n:: >>      " << endl;
+            cout << destCell;
 
             // Taking input for the first time
             SetConsoleTextAttribute(h, 15);
             gotoxy(19, 19);
-            cout << "\n:: Enter cell to select: ";
-            cin >> srcCell;
-            cout << ":: Enter destination cell: ";
-            cin >> destCell;
+            cout << "\n:: >> ";
+            cin >> srcCell >> destCell;
         }
 
         int srcX, srcY, destX, destY;
@@ -1114,10 +1167,14 @@ int main() {
                 cout << "BLACK IN CHECK" << endl;
             }
 
-            gotoxy(82, 1 + moveCounter);
+            SetConsoleTextAttribute(h, 15);
+
+            gotoxy(84, 1 + moveCounter);
             cout << srcCell << " to "<< destCell;
+            if (moveCounter > 0) {
+                currentGameFile << endl;
+            }
             currentGameFile << srcCell << destCell;
-            currentGameFile << endl;
 
             gotoxy(4, 25);
 
@@ -1138,7 +1195,6 @@ int main() {
 
         gotoxy(0, 0);
     }
-
 
     getch();
     return 0;
