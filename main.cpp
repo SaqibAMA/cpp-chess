@@ -135,6 +135,14 @@ void gotoxy(int x, int y) {
 
 }
 
+bool indExists(int ind) {
+
+    // Returns if the index provided is within the range of a chess array
+
+    return (ind >= 0 && ind < 8);
+
+}
+
 bool kingInCheck(int board[][8]) {
 
     // Error tracking file
@@ -162,14 +170,50 @@ bool kingInCheck(int board[][8]) {
     // Checking for check by pawn
     if ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6)) {
         return true;
-    } // Checking for check by knight
-    /*else if ((board[kingLocY + 2][kingLocX + 1] == 2) || (board[kingLocY + 2][kingLocX - 1] == 2) ||
-            (board[kingLocY - 2][kingLocX + 1] == 2) || (board[kingLocY - 2][kingLocX - 1] == 2) ||
-            (board[kingLocY - 1][kingLocX + 2] == 2) || (board[kingLocY + 1][kingLocX + 2] == 2) ||
-            (board[kingLocY - 1][kingLocX - 2] == 2) || (board[kingLocY + 1][kingLocX - 2] == 2)) {
-        return true;
-    }*/
+    }
+    // Checking for check by knight
+    else if (indExists(kingLocY - 1)) {
 
+        if (indExists(kingLocX - 2) && board[kingLocY - 1][kingLocX - 2] == 2) {
+            return true;
+        }
+        else if (indExists((kingLocX + 2) && board[kingLocY - 1][kingLocX + 2] == 2)) {
+            return true;
+        }
+
+        if (indExists(kingLocY - 2)) {
+
+            if (indExists(kingLocX - 1) && board[kingLocY - 2][kingLocX - 1] == 2) {
+                return true;
+            }
+            else if (indExists(kingLocX + 1) &&board[kingLocY - 2][kingLocX + 1] == 2) {
+                return true;
+            }
+
+        }
+
+    }
+    else if (indExists(kingLocY + 1)) {
+
+        if (indExists(kingLocX - 2) && board[kingLocY + 1][kingLocX - 2] == 2) {
+            return true;
+        }
+        else if (indExists(kingLocX + 2) && board[kingLocY + 1][kingLocX + 2] == 2) {
+            return true;
+        }
+
+        if (indExists(kingLocY + 2)) {
+
+            if (indExists(kingLocX - 1) && board[kingLocY + 2][kingLocX - 1] == 2) {
+                return true;
+            }
+            else if (indExists(kingLocX + 1) &&board[kingLocY + 2][kingLocX + 1] == 2) {
+                return true;
+            }
+
+        }
+
+    }
     // Checking for check by rook & queen (front)
     int i = 1;
     bool isInCheck = false;
@@ -266,7 +310,6 @@ bool kingInCheck(int board[][8]) {
 
     }*/
 
-    errorLog << "Value: " << isInCheck << endl;
     return isInCheck;
 }
 
@@ -343,20 +386,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             bool isValidMove = false;
 
-            for (int i = 1; i < 8 && !isValidMove; i++) {
-
-                if (
-                    ((srcX == destX) && (srcY + i == destY)) ||
-                    ((srcX == destX) && (srcY - i == destY)) ||
-                    ((srcY == destY) && (srcX + i == destX)) ||
-                    ((srcY == destY) && (srcX - i == destX))
-                    ) {
-
-                    isValidMove = true;
-
-                }
-
-            }
+            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
 
             if(isValidMove) {
 
@@ -432,20 +462,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             bool isValidMove = false;
 
-            for (int i = 1; i < 8 && !isValidMove; i++) {
-
-                if (
-                        ((srcX - i == destX) && (srcY - i == destY)) ||
-                        ((srcX + i == destX) && (srcY - i == destY)) ||
-                        ((srcX - i == destX) && (srcY + i == destY)) ||
-                        ((srcX + i == destX) && (srcY + i == destY))
-                        ) {
-
-                    isValidMove = true;
-
-                }
-
-            }
+            isValidMove = (abs(srcX - destX) == abs(srcY - destY));
 
             if(isValidMove) {
 
@@ -533,6 +550,9 @@ int main() {
     int moveCounter = 0;
     int turn = 0;   // Keeps a track of the current player turn
 
+    ofstream currentGameFile;
+    currentGameFile.open("currentGameMoves.txt");
+
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
     gotoxy(80, 0 + moveCounter);
@@ -601,30 +621,40 @@ int main() {
 
             moveCounter++;
 
-            /*if(kingInCheck(board)) {
+            if(kingInCheck(board)) {
 
-                gotoxy(102, 2);
+                gotoxy(103, 2);
 
                 SetConsoleTextAttribute(h, FOREGROUND_RED);
                 cout << "BLACK IN CHECK" << endl;
-                SetConsoleTextAttribute(h, 15);
-                gotoxy(0, 0);
             }
             else {
-                gotoxy(102, 2);
+                gotoxy(103, 2);
 
                 SetConsoleTextAttribute(h, 0);
                 cout << "BLACK IN CHECK" << endl;
-                SetConsoleTextAttribute(h, 15);
-
-                gotoxy(0, 0);
-            }*/
+            }
 
             gotoxy(82, 1 + moveCounter);
             cout << srcCell << " to "<< destCell;
+            currentGameFile << srcCell << destCell;
+            currentGameFile << endl;
+
+            gotoxy(4, 25);
+
+            SetConsoleTextAttribute(h, 0);
+            cout << "INVALID MOVE" << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
         }
         else {
-            cout << "Invalid move.";
+            gotoxy(4, 25);
+
+            SetConsoleTextAttribute(h, FOREGROUND_RED);
+            cout << "INVALID MOVE" << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
         }
 
         gotoxy(0, 0);
