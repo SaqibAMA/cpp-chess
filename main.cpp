@@ -520,7 +520,128 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
 
         }
+        else if (board[srcY][srcX] == 4) {
 
+            bool isValidMove;
+
+            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
+
+            if(isValidMove) {
+
+                bool canMove = true;
+
+                if (srcX == destX) {
+
+                    // The movement is vertical ^ or v
+
+                    if (destY < srcY) {
+
+                        for (int i = 1; i < abs(srcY - destY) && canMove; i++) {
+                            if (!isEmpty(board[srcY - i][srcX])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                    else if (destY > srcY) {
+
+                        for (int i = 1; i < abs(srcY - destY) && canMove; i++) {
+                            if (!isEmpty(board[srcY + i][srcX])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                }
+                else if (srcY == destY) {
+
+                    // The movement is horizontal <-->
+
+                    if (destX < srcX) {
+
+                        for (int i = 1; i < abs(srcX - destX) && canMove; i++) {
+                            if (!isEmpty(board[srcY][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+                    else if (destX > srcX) {
+
+                        for (int i = 1; i < abs(srcX - destX) && canMove; i++) {
+                            if (!isEmpty(board[srcY][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+
+                    }
+
+                }
+
+                if (canMove) {
+                    board[destY][destX] = board[srcY][srcX];
+                    board[srcY][srcX] = 0;
+                    return true;
+                }
+            }
+
+            isValidMove = (abs(srcX - destX) == abs(srcY - destY));
+
+            if(isValidMove) {
+
+                bool canMove = true;
+
+                if (destY < srcY) {
+
+                    if (destX < srcX) {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY - i][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY - i][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+
+                }
+                else if (destY > srcY) {
+
+                    if (destX < srcX) {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY + i][srcX - i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = 1; i < abs(destY - srcY); i++){
+                            if (!isEmpty(board[srcY + i][srcX + i])) {
+                                canMove = false;
+                            }
+                        }
+                    }
+
+                }
+
+                if (canMove) {
+                    board[destY][destX] = board[srcY][srcX];
+                    board[srcY][srcX] = 0;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+
+        }
 
         //turn = 1;
     }
