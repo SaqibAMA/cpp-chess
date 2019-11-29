@@ -642,8 +642,27 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
             }
 
         }
+        else if (board[srcY][srcX] == 5) {
 
-        //turn = 1;
+            bool isValidMove = false;
+
+            isValidMove = (abs(srcX - destX) == 1 && abs(srcY - destY) == 1)
+                    ||(srcX == destX && abs(srcY - destY) == 1)
+                    ||(srcY == destY && abs(srcX - destX) == 1);
+
+            if (isValidMove) {
+
+                board[destY][destX] = board[srcY][srcX];
+                board[srcY][srcX] = 0;
+                return true;
+
+            }
+            else {
+                return false;
+            }
+
+        }
+        // turn = 1;
     }
     else if (turn == 1) {
         board[destY][destX] = board[srcY][srcX];
