@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <ctime>
 #include "connector.h"
 
 using namespace std;
@@ -387,9 +388,26 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         // start of rook logic
         else if (board[srcY][srcX] == 1) {
 
-            bool isValidMove;
+            /*bool isValidMove;
 
-            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
+            isValidMove =  (srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0);*/
+
+            bool isValidMove = false;
+
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                        ((srcX == destX) && (srcY + i == destY)) ||
+                        ((srcX == destX) && (srcY - i == destY)) ||
+                        ((srcY == destY) && (srcX + i == destX)) ||
+                        ((srcY == destY) && (srcX - i == destX))
+                        ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
 
             if(isValidMove) {
 
@@ -525,9 +543,22 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         }
         else if (board[srcY][srcX] == 4) {
 
-            bool isValidMove;
+            bool isValidMove = false;
 
-            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                        ((srcX == destX) && (srcY + i == destY)) ||
+                        ((srcX == destX) && (srcY - i == destY)) ||
+                        ((srcY == destY) && (srcX + i == destX)) ||
+                        ((srcY == destY) && (srcX - i == destX))
+                        ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
 
             if(isValidMove) {
 
@@ -751,9 +782,26 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
             // start of rook logic
         else if (board[srcY][srcX] == -1) {
 
-            bool isValidMove;
+            /*bool isValidMove;
 
-            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
+            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));*/
+
+            bool isValidMove = false;
+
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                        ((srcX == destX) && (srcY + i == destY)) ||
+                        ((srcX == destX) && (srcY - i == destY)) ||
+                        ((srcY == destY) && (srcX + i == destX)) ||
+                        ((srcY == destY) && (srcX - i == destX))
+                        ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
 
             if(isValidMove) {
 
@@ -889,9 +937,22 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
         }
         else if (board[srcY][srcX] == -4) {
 
-            bool isValidMove;
+            bool isValidMove = false;
 
-            isValidMove =  ((srcX == destX && abs(srcY-destY) > 0) || (srcY == destY && abs(srcX - destY) > 0));
+            for (int i = 1; i < 8 && !isValidMove; i++) {
+
+                if (
+                        ((srcX == destX) && (srcY + i == destY)) ||
+                        ((srcX == destX) && (srcY - i == destY)) ||
+                        ((srcY == destY) && (srcX + i == destX)) ||
+                        ((srcY == destY) && (srcX - i == destX))
+                        ) {
+
+                    isValidMove = true;
+
+                }
+
+            }
 
             if(isValidMove) {
 
@@ -1052,84 +1113,22 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
     return false;
 }
 
-void replayGame(int board[][8], int movedCells[][8]) {
+void timer() {
 
-    ifstream moves;
-    moves.open("sampleReplay.txt");
+    clock_t t = clock();
+    clock_t t2 = clock();
 
-    char srcCell[3];
-    char destCell[3];
+    while (abs(t2 - t) < 50000) {
 
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    int srcX, srcY, destX, destY;
-    int turn = 0;
-    int moveCounter = 0;
-    bool endOfMoves = false;
-    bool wCanCastle = true, bCanCastle = true;
-
-    while(!moves.eof()) {
-
-        printBoard(board);
-
-        srcCell[0] = moves.get();
-        srcCell[1] = moves.get();
-        srcCell[2] = '\0';
-
-        destCell[0] = moves.get();
-        destCell[1] = moves.get();
-        destCell[2] = '\0';
-
-        moves.get();    // To remove next line character
-
+        gotoxy(80, 20);
+        cout << t2 / 1000 << endl;
         gotoxy(0, 0);
+        this_thread::sleep_for(chrono::milliseconds(1000));
 
-        if ((chessCordToIndex(srcCell, srcX, srcY) &&
-             chessCordToIndex(destCell, destX, destY)) &&
-            !isEmpty(board[srcY][srcX]) &&
-            !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
-            movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle, movedCells)) {
-
-            moveCounter++;
-            turn = (moveCounter % 2);
-
-        }
-        else {
-            gotoxy(4, 25);
-
-            SetConsoleTextAttribute(h, FOREGROUND_RED);
-            cout << "INVALID MOVE" << endl;
-            SetConsoleTextAttribute(h, 15);
-            gotoxy(0, 0);
-        }
-
-        this_thread::sleep_for(chrono::milliseconds(800));
-
-    }
-}
-
-/*
-void saveGame(char fileName[], int board[][8]) {
-
-    // add functionality to save board
-
-    ofstream saveMoves;
-    saveMoves.open(strcat(fileName, ".txt"));
-
-    ifstream moveLog;
-    moveLog.open("currentGameMoves.txt");
-
-    char ch;
-
-    while (!moveLog.eof()) {
-
-        ch = moveLog.get();
-        saveMoves << ch;
-
+        t2 = clock();
     }
 
 }
- */
 
 int main() {
 
@@ -1215,6 +1214,7 @@ int main() {
             gotoxy(19, 19);
             cout << "\n:: >> ";
             cin >> srcCell >> destCell;
+
         }
 
         int srcX, srcY, destX, destY;
