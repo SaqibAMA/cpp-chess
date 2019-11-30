@@ -316,7 +316,7 @@ bool kingInCheck(int board[][8]) {
     return isInCheck;
 }
 
-bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle) {
+bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle, int movedCells[][8]) {
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -444,9 +444,6 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
                 }
 
                 if (canMove) {
-                    if (wCanCastle && srcX == 7 && srcY == 7) {
-                        wCanCastle = false;
-                    }
                     board[destY][destX] = board[srcY][srcX];
                     board[srcY][srcX] = 0;
                     return true;
@@ -652,15 +649,21 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             bool isValidMove;
 
-            isValidMove = (srcX == 4 && srcY == 7 && destX == 6 && destY == 7) && wCanCastle;
+            isValidMove = ((srcX == 4 && srcY == 7 && destX == 6 && destY == 7) && movedCells[7][7] == 0 && movedCells[7][4] == 0)
+                    || ((srcX == 4 && srcY == 7 && destX == 2 && destY == 7) && movedCells[7][0] == 0 && movedCells[7][4] == 0);
 
             if (isValidMove) {
 
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
-                board[destY][destX - 1] = 1;
-                board[7][7] = 0;
-                wCanCastle = false;
+                if (((srcX == 4 && srcY == 7 && destX == 6 && destY == 7) && movedCells[7][7] == 0 && movedCells[7][4] == 0)) {
+                    board[destY][destX - 1] = 1;
+                    board[7][7] = 0;
+                }
+                else {
+                    board[destY][destX + 1] = 1;
+                    board[7][7] = 0;
+                }
                 return true;
 
             }
@@ -673,7 +676,6 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
                     board[destY][destX] = board[srcY][srcX];
                     board[srcY][srcX] = 0;
-                    wCanCastle = false;
                     return true;
                 } else {
                     return false;
@@ -806,11 +808,6 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
                 }
 
                 if (canMove) {
-
-                    if (bCanCastle && srcX == 7 && srcY == 0) {
-                        bCanCastle = false;
-                    }
-
                     board[destY][destX] = board[srcY][srcX];
                     board[srcY][srcX] = 0;
                     return true;
@@ -1016,28 +1013,33 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             bool isValidMove;
 
-            isValidMove = (srcX == 4 && srcY == 0 && destX == 6 && destY == 0) && bCanCastle;
+            isValidMove = ((srcX == 4 && srcY == 0 && destX == 6 && destY == 0) && movedCells[0][7] == 0 && movedCells[0][4] == 0)
+                          || ((srcX == 4 && srcY == 0 && destX == 2 && destY == 0) && movedCells[0][0] == 0 && movedCells[0][4] == 0);
 
             if (isValidMove) {
 
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
-                board[destY][destX - 1] = 1;
-                board[7][7] = 0;
-                bCanCastle = false;
+                if (((srcX == 4 && srcY == 0 && destX == 6 && destY == 0) && movedCells[0][7] == 0 && movedCells[0][4] == 0)) {
+                    board[destY][destX - 1] = -1;
+                    board[0][7] = 0;
+                }
+                else {
+                    board[destY][destX + 1] = -1;
+                    board[0][0] = 0;
+                }
                 return true;
 
             }
             else {
                 isValidMove = (abs(srcX - destX) == 1 && abs(srcY - destY) == 1)
-                              ||(srcX == destX && abs(srcY - destY) == 1)
-                              ||(srcY == destY && abs(srcX - destX) == 1);
+                              || (srcX == destX && abs(srcY - destY) == 1)
+                              || (srcY == destY && abs(srcX - destX) == 1);
 
                 if (isValidMove) {
 
                     board[destY][destX] = board[srcY][srcX];
                     board[srcY][srcX] = 0;
-                    bCanCastle = false;
                     return true;
                 } else {
                     return false;
@@ -1050,7 +1052,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
     return false;
 }
 
-void replayGame(int board[][8]) {
+void replayGame(int board[][8], int movedCells[][8]) {
 
     ifstream moves;
     moves.open("sampleReplay.txt");
@@ -1086,7 +1088,7 @@ void replayGame(int board[][8]) {
              chessCordToIndex(destCell, destX, destY)) &&
             !isEmpty(board[srcY][srcX]) &&
             !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
-            movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle)) {
+            movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle, movedCells)) {
 
             moveCounter++;
             turn = (moveCounter % 2);
@@ -1141,6 +1143,8 @@ int main() {
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
+
+    int movedCells[8][8] = {0};
 
     int moveCounter = 0;
     int turn = 0;   // Keeps a track of the current player turn
@@ -1220,10 +1224,12 @@ int main() {
         chessCordToIndex(destCell, destX, destY)) &&
         !isEmpty(board[srcY][srcX]) &&
         !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
-        movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle)) {
+        movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle, movedCells)) {
 
             moveCounter++;
             turn = (moveCounter % 2);
+
+            movedCells[srcY][srcX] += 1;
 
             // Prints the previous move in black to erase it
             gotoxy(85, 2);
