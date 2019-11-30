@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include "connector.h"
 
 using namespace std;
 
@@ -1069,6 +1070,7 @@ void replayGame(int board[][8]) {
     }
 }
 
+/*
 void saveGame(char fileName[], int board[][8]) {
 
     // add functionality to save board
@@ -1089,6 +1091,7 @@ void saveGame(char fileName[], int board[][8]) {
     }
 
 }
+ */
 
 int main() {
 
@@ -1106,16 +1109,25 @@ int main() {
     int moveCounter = 0;
     int turn = 0;   // Keeps a track of the current player turn
 
+    string currentMove;
+    string previousMove;
+
     ofstream currentGameFile;
     currentGameFile.open("currentGameMoves.txt");
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    gotoxy(80, 0 + moveCounter);
-    cout << ":: RECENT MOVES ::" << endl;
+    gotoxy(80, 0);
+    cout << ":: LAST MOVE ::" << endl;
+
+    char enginePath[] = "stockfish.exe";
+    connectToEngine(enginePath);
 
     gotoxy(100, 0);
     cout << ":: GAME STATUS ::" << endl;
+
+    gotoxy(80, 5);
+    cout << ":: BEST MOVE ::" << endl;
     gotoxy(0, 0);
 
     while (moveCounter < INT_MAX) {
@@ -1174,6 +1186,31 @@ int main() {
             moveCounter++;
             turn = (moveCounter % 2);
 
+            // Prints the previous move in black to erase it
+            gotoxy(85, 2);
+            SetConsoleTextAttribute(h, 0);
+            cout << srcCell << destCell << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
+            (moveCounter > 0)? previousMove += " " + currentMove : previousMove = currentMove;
+
+            string srcAd = srcCell;
+            string destAd = destCell;
+
+            currentMove = srcAd + destAd;
+
+            gotoxy(85, 7);
+            SetConsoleTextAttribute(h, 11);
+            if (moveCounter < 1) {
+                cout << getNextMove(currentMove) << endl;
+            }
+            else {
+                cout << getNextMove(previousMove + " " + currentMove) << endl;
+            }
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
             if(kingInCheck(board)) {
 
                 gotoxy(103, 2);
@@ -1188,14 +1225,11 @@ int main() {
                 cout << "BLACK IN CHECK" << endl;
             }
 
-            SetConsoleTextAttribute(h, 15);
+            gotoxy(85, 2);
+            SetConsoleTextAttribute(h, 11);
+            cout << srcCell << destCell;
 
-            gotoxy(84, 1 + moveCounter);
-            cout << srcCell << " to "<< destCell;
-            if (moveCounter > 0) {
-                currentGameFile << endl;
-            }
-            currentGameFile << srcCell << destCell;
+            currentGameFile << srcCell << destCell << endl;
 
             gotoxy(4, 25);
 

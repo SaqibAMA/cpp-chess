@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/connector.h
+iostream
+-
+windows.h
+-
+stdio.h
+-
+string
+-
+
 D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/main.cpp
 iostream
 -
@@ -23,4 +33,6 @@ chrono
 -
 thread
 -
+connector.h
+D:/FAST/Semester 01/Programming Fundamentals/Homework and Assignment/Final Project/cpp-chess/connector.h
 
