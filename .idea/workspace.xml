@@ -17,7 +17,6 @@
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -98,7 +97,7 @@
       <workItem from="1575006598112" duration="2645000" />
       <workItem from="1575017870551" duration="2664000" />
       <workItem from="1575028220516" duration="29820000" />
-      <workItem from="1575106702688" duration="10449000" />
+      <workItem from="1575106702688" duration="10958000" />
     </task>
     <servers />
   </component>

@@ -240,6 +240,64 @@ bool kingInCheck(int board[][8]) {
         i++;
     }
 
+
+    // Check by Bishop
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX + i] == 3) {
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX + i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX - i] == 3) {
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX - i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX + i] == 3) {
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX + i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX - i] == 3) {
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX - i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
     return false;
 }
 

@@ -1,12 +1,2 @@
-h3h4
-e7e5
-h4g4
-e5e4
-g4g6
-e4e3
-g6c6
-f8c5
-c6a6
-f7f6
-a6a4
-c5b4
+e2e3
+c4c5
