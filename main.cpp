@@ -171,8 +171,17 @@ bool kingInCheck(int board[][8]) {
         }
     }
 
+    gotoxy(80, 30);
+    errorLog << board[kingLocY + 1][kingLocX + 1] << board[kingLocY + 1][kingLocX - 1] << endl;
+
+    if (board[kingLocY + 1][kingLocX + 1] == 6 || board[kingLocY + 1][kingLocX - 1] == 6) {
+        return true;
+    }
+
+
+/*
     // Checking for check by pawn
-    if ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6)) {
+    if (indExists(kingLocY + 1) && ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6))) {
         return true;
     }
     // Checking for check by knight
@@ -218,103 +227,9 @@ bool kingInCheck(int board[][8]) {
         }
 
     }
-    // Checking for check by rook & queen (front)
-    int i = 1;
-    bool isInCheck = false;
+*/
 
-    /*while (kingLocY + i < 8 && !isInCheck && board[kingLocY + i][kingLocX] <= 0) {
-
-        if (board[kingLocY + i][kingLocX] == 1 || board[kingLocY + i][kingLocX] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-    // Checking for check by rook & queen(back)
-    i = 1;
-    while (kingLocY - i >= 0 && !isInCheck) {
-
-        if (board[kingLocY - i][kingLocX] == 1 || board[kingLocY - i][kingLocX] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-
-    // Checking for check by rook & queen (right)
-    i = 1;
-    while (kingLocX + i < 8 && !isInCheck) {
-
-        if (board[kingLocY][kingLocX + i] == 1 || board[kingLocY][kingLocX + i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-
-    // Checking for check by rook & queen (left)
-    i = 1;
-    while (kingLocX - i >= 0 && !isInCheck) {
-
-        if (board[kingLocY][kingLocX - i] == 1 || board[kingLocY][kingLocX - i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-
-    // Checking for check by bishop and queen (bottom right)
-    i = 1;
-    while ((kingLocY + i < 8 || kingLocX + i < 8) && !isInCheck) {
-
-        if (board[kingLocY + i][kingLocX + i] == 3 || board[kingLocY + i][kingLocX + i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-
-    // Checking for check by bishop & queen (bottom left)
-    i = 1;
-    while ((kingLocY + i < 8 || kingLocX - i >= 0) && !isInCheck) {
-
-        if (board[kingLocY + i][kingLocX - i] == 3 || board[kingLocY + i][kingLocX - i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-    }
-
-    // Checking for check by bishop & queen (top right)
-    i = 1;
-    while ((kingLocY - i >= 0 || kingLocX + i < 8) && !isInCheck) {
-
-        if (board[kingLocY - i][kingLocX + i] == 3 || board[kingLocY - i][kingLocX + i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }
-
-    // Checking for check by bishop & queen (top left)
-    i = 1;
-    while ((kingLocY - i >= 0 || kingLocX - i >= 0) && !isInCheck) {
-
-        if (board[kingLocY - i][kingLocX - i] == 3 || board[kingLocY - i][kingLocX - i] == 4) {
-            isInCheck = true;
-        }
-
-        i++;
-
-    }*/
-
-    return isInCheck;
+    return false;
 }
 
 bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle, int movedCells[][8]) {
@@ -329,7 +244,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             int maxStep = (srcY == 6) + 1;
 
-            if (isEmpty(board[srcY - 1][srcX]) &&
+            if (isEmpty(board[srcY - abs(destY - srcY)][srcX]) &&
             srcX == destX &&
             (srcY - destY) <= maxStep &&
             (srcY - destY) > 0) {
@@ -723,7 +638,7 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
             int maxStep = (srcY == 1) + 1;
 
-            if (isEmpty(board[srcY + 1][srcX]) &&
+            if (isEmpty(board[srcY + abs(destY - srcY)][srcX]) &&
                 srcX == destX &&
                 (destY - srcY) <= maxStep &&
                 (srcY - destY) < 0) {
@@ -1133,11 +1048,11 @@ void timer() {
 int main() {
 
     int board[8][8] = {
-            {-1,-2,-3,-4,-5,-3,-2,-1},
+            {-1,-2,-3,-4,0,-3,-2,-1},
             {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, -5, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
