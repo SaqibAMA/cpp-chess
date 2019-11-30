@@ -172,62 +172,73 @@ bool kingInCheck(int board[][8]) {
     }
 
     gotoxy(80, 30);
-    errorLog << board[kingLocY + 1][kingLocX + 1] << board[kingLocY + 1][kingLocX - 1] << endl;
 
     if (board[kingLocY + 1][kingLocX + 1] == 6 || board[kingLocY + 1][kingLocX - 1] == 6) {
         return true;
     }
-
-
-/*
-    // Checking for check by pawn
-    if (indExists(kingLocY + 1) && ((board[kingLocY + 1][kingLocX + 1] == 6) || (board[kingLocY + 1][kingLocX - 1] == 6))) {
+    else if (board[kingLocY + 1][kingLocX + 2] == 2 || board[kingLocY + 1][kingLocX - 2] == 2 ||
+    board[kingLocY + 2][kingLocX + 1] == 2 || board[kingLocY + 2][kingLocX - 1] == 2 ||
+    board[kingLocY - 1][kingLocX + 2] == 2 || board[kingLocY - 1][kingLocX - 2] == 2 ||
+    board[kingLocY - 2][kingLocX + 1] == 2 || board[kingLocY - 2][kingLocX - 1] == 2){
         return true;
     }
-    // Checking for check by knight
-    else if (indExists(kingLocY - 1)) {
 
-        if (indExists(kingLocX - 2) && board[kingLocY - 1][kingLocX - 2] == 2) {
+    // Check by Rook
+    int i = 1;
+    bool pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY][kingLocX + i] == 1) {
             return true;
         }
-        else if (indExists((kingLocX + 2) && board[kingLocY - 1][kingLocX + 2] == 2)) {
-            return true;
+        else if (board[kingLocY][kingLocX + i] != 0) {
+            pathBlocked = true;
         }
 
-        if (indExists(kingLocY - 2)) {
-
-            if (indExists(kingLocX - 1) && board[kingLocY - 2][kingLocX - 1] == 2) {
-                return true;
-            }
-            else if (indExists(kingLocX + 1) &&board[kingLocY - 2][kingLocX + 1] == 2) {
-                return true;
-            }
-
-        }
-
+        i++;
     }
-    else if (indExists(kingLocY + 1)) {
 
-        if (indExists(kingLocX - 2) && board[kingLocY + 1][kingLocX - 2] == 2) {
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY][kingLocX - i] == 1) {
             return true;
         }
-        else if (indExists(kingLocX + 2) && board[kingLocY + 1][kingLocX + 2] == 2) {
-            return true;
+        else if (board[kingLocY][kingLocX - i] != 0) {
+            pathBlocked = true;
         }
 
-        if (indExists(kingLocY + 2)) {
-
-            if (indExists(kingLocX - 1) && board[kingLocY + 2][kingLocX - 1] == 2) {
-                return true;
-            }
-            else if (indExists(kingLocX + 1) &&board[kingLocY + 2][kingLocX + 1] == 2) {
-                return true;
-            }
-
-        }
-
+        i++;
     }
-*/
+
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX] == 1) {
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (i < 8 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX] == 1) {
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
 
     return false;
 }
@@ -1052,8 +1063,8 @@ int main() {
             {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, -5, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, -5, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 1},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
