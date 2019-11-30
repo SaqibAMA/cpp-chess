@@ -12,12 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aada5b0b-ad55-4aac-b605-b12e2928321e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/connector.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stockfish.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/CXX.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/depend.internal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/depend.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" afterDir="false" />
@@ -101,7 +96,7 @@
       <workItem from="1574758202297" duration="2906000" />
       <workItem from="1575006598112" duration="2645000" />
       <workItem from="1575017870551" duration="2664000" />
-      <workItem from="1575028220516" duration="21032000" />
+      <workItem from="1575028220516" duration="25658000" />
     </task>
     <servers />
   </component>
