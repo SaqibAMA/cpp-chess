@@ -147,23 +147,212 @@ bool indExists(int ind) {
 
 }
 
-void genMoves(int p, int pX, int pY, int mvTrack[][8], int board[][8]){
+void genMoves(int board[][8], int mvTrack[][8]){
 
-    //makes these neg
-    if (p == -6) {
+    for (int i = 0; i < 8; i++) {
 
-        if (indExists(pY + 1) && indExists(pX + 1) && !hasSamePiece(board[pY][pX], board[pY + 1][pX + 1]) && !isEmpty(board[pY - 1][pX + 1])) {
-            mvTrack[pY + 1][pX + 1] += 1;
-        }
-        if (indExists(pY + 1) && indExists(pX - 1) && !hasSamePiece(board[pY][pX], board[pY + 1][pX - 1]) && !isEmpty(board[pY - 1][pX - 1])) {
-            mvTrack[pY + 1][pX - 1] += 1;
-        }
+        for (int j = 0; j < 8; j++) {
 
-        if (indExists(pY + 1) && isEmpty(board[pY + 1][pX])) {
-            mvTrack[pY + 1][pX] += 1;
-        }
-        if (pY == 1 && indExists(pY + 2) && isEmpty(board[pY + 2][pX])) {
-            mvTrack[pY + 2][pX] += 1;
+            if (board[i][j] == -6) {
+
+                if (isEmpty(board[i + 1][j])) {
+                    mvTrack[i + 1][j] += 1;
+
+                    if (isEmpty(board[i + 2][j]) && i == 1) {
+                        mvTrack[i + 2][j] += 1;
+                    }
+
+                }
+                if (!isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
+                    mvTrack[i + 1][j + 1] += 1;
+                }
+                if (!isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
+                    mvTrack[i + 1][j - 1] += 1;
+                }
+
+            }
+            if (board[i][j] == -1 || board[i][j] == -4) {
+
+                int k = 1;
+                bool pathBlocked = false;
+                while (i + k < 8 && !pathBlocked) {
+                    // bottom
+                    if (board[i + k][j] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j] > 0) {
+                        mvTrack[i + k][j] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j + k < 8 && !pathBlocked) {
+                    // right
+                    if (board[i][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i][j + k] > 0) {
+                        mvTrack[i][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (i - k >= 0 && !pathBlocked) {
+                    // top
+                    if (board[i - k][j] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j] > 0) {
+                        mvTrack[i - k][j] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j - k >= 0 && !pathBlocked) {
+                    // left
+                    if (board[i][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i][j - k] > 0) {
+                        mvTrack[i][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+
+
+            }
+            if (board[i][j] == -2) {
+
+                if (!hasSamePiece(board[i][j], board[i - 2][j + 1]) || isEmpty(board[i - 2][j + 1])) {
+                    mvTrack[i - 2][j + 1] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i - 2][j - 1]) || isEmpty(board[i - 2][j - 1])) {
+                    mvTrack[i - 2][j - 1] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i - 1][j + 2]) || isEmpty(board[i - 1][j + 2])) {
+                    mvTrack[i - 1][j + 2] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i - 1][j - 2]) || isEmpty(board[i - 1][j - 2])) {
+                    mvTrack[i - 1][j - 2] += 1;
+                }
+
+                if (!hasSamePiece(board[i][j], board[i + 2][j + 1]) || isEmpty(board[i + 2][j + 1])) {
+                    mvTrack[i + 2][j + 1] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i + 2][j - 1]) || isEmpty(board[i + 2][j - 1])) {
+                    mvTrack[i + 2][j - 1] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i + 1][j + 2]) || isEmpty(board[i + 1][j + 2])) {
+                    mvTrack[i + 1][j + 2] += 1;
+                }
+                if (!hasSamePiece(board[i][j], board[i + 1][j - 2]) || isEmpty(board[i + 1][j - 2])) {
+                    mvTrack[i + 1][j - 2] += 1;
+                }
+
+            }
+            if (board[i][j] == -3 || board[i][j] == -4) {
+
+                int k = 1;
+                bool pathBlocked = false;
+                while (i + k < 8 && !pathBlocked) {
+                    // bottom right
+                    if (board[i + k][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j + k] > 0) {
+                        mvTrack[i + k][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j + k < 8 && !pathBlocked) {
+                    // top right
+                    if (board[i - k][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j + k] > 0) {
+                        mvTrack[i - k][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (i - k >= 0 && !pathBlocked) {
+                    // top left
+                    if (board[i - k][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j - k] > 0) {
+                        mvTrack[i - k][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j - k >= 0 && !pathBlocked) {
+                    // bottom left
+                    if (board[i + k][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j - k] > 0) {
+                        mvTrack[i + k][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+            }
+
         }
 
     }
@@ -286,6 +475,11 @@ void checkPath(int board[][8], int mvTrack[][8], int checkX, int checkY) {
         }
 
     }
+    if (board[checkY][checkX] == 2) {
+
+        mvTrack[checkY][checkX] = 1000;
+
+    }
 
 }
 
@@ -298,13 +492,7 @@ bool kingInCheckMateB(int board[][8], int checkX, int checkY) {
 
     checkPath(board, mvTrack, checkX, checkY);
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-
-            genMoves(board[i][j], i, j, mvTrack, board);
-
-        }
-    }
+    genMoves(board, mvTrack);
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -1361,15 +1549,26 @@ void timer() {
 
 int main() {
 
-    int board[8][8] = {
+    /*int board[8][8] = {
             {-1,-2,-3,-4,-5,-3,-2,-1},
-            {-6,-6,-6,-6,0,-6,-6,-6},
+            {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 3},
-            {0, 0, 0, 0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
+    };*/
+
+    int board[8][8] = {
+            {0, 0, 0, -5, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, -4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 6, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}
     };
 
     int movedCells[8][8] = {0};
