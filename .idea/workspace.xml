@@ -13,11 +13,11 @@
   <component name="ChangeListManager">
     <list default="true" id="aada5b0b-ad55-4aac-b605-b12e2928321e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/dataLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/dataLog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/sampleReplay.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/sampleReplay.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -99,7 +99,8 @@
       <workItem from="1575017870551" duration="2664000" />
       <workItem from="1575028220516" duration="29820000" />
       <workItem from="1575106702688" duration="12484000" />
-      <workItem from="1575173442568" duration="19524000" />
+      <workItem from="1575173442568" duration="21431000" />
+      <workItem from="1575308362486" duration="7508000" />
     </task>
     <servers />
   </component>

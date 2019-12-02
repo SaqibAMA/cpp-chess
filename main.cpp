@@ -13,6 +13,20 @@ using namespace std;
 
 #define CELL_WIDTH 4
 
+char printPiece(int pieceCode);
+void printBoard(int board[][8]);
+bool chessCordToIndex(char cord[], int &x, int &y);
+bool isEmpty(int destCell);
+bool hasSamePiece(int srcCell, int destCell);
+void gotoxy(int x, int y);
+bool indExists(int ind);
+bool isKingMove(int board[][8], int tempBoard[][8], int srcX, int srcY, int destX, int destY);
+void genMoves(int board[][8], int mvTrack[][8]);
+void checkPath(int board[][8], int mvTrack[][8], int checkX, int checkY);
+bool kingInCheckB(int board[][8], int &checkX, int &checkY);
+bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle, int movedCells[][8]);
+
+
 char printPiece(int pieceCode) {
 
     /*
@@ -144,6 +158,74 @@ bool indExists(int ind) {
     // Returns if the index provided is within the range of a chess array
 
     return (ind >= 0 && ind < 8);
+
+}
+
+bool isKingMove(int board[][8], int tempBoard[][8], int srcX, int srcY, int destX, int destY) {
+
+    if (indExists(destY) && indExists(destX)) {
+        if (hasSamePiece(board[srcY][srcX], board[destY][destX]) && !isEmpty(board[destY][destX])) {
+
+            return false;
+
+        } else {
+
+            int checkX = -1, checkY = -1;
+
+            tempBoard[destY][destX] = tempBoard[srcY][srcX];
+            tempBoard[srcY][srcX] = 0;
+
+            if (kingInCheckB(tempBoard, checkX, checkY)) {
+                tempBoard[srcY][srcY] = tempBoard[destY][destX];
+                tempBoard[destY][destX] = 0;
+                return false;
+            } else {
+                tempBoard[srcY][srcY] = tempBoard[destY][destX];
+                tempBoard[destY][destX] = 0;
+                return true;
+            }
+
+        }
+    }
+    else {
+        return false;
+    }
+
+}
+
+bool kingHasMoves(int board[][8]) {
+
+    // Copying the board
+    int tempBoard[8][8];
+
+    int kingLocX = 4, kingLocY = 0;
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+
+            tempBoard[i][j] = board[i][j];
+            if (board[i][j] == -5) {
+
+                kingLocX = j;
+                kingLocY = i;
+
+            }
+
+        }
+    }
+
+    if (isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) ||
+    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1)) {
+        return true;
+    }
+
+    return true;
 
 }
 
@@ -496,12 +578,30 @@ bool kingInCheckMateB(int board[][8], int checkX, int checkY) {
 
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            errorLog << mvTrack[i][j] << " ";
+
+            errorLog << mvTrack[i][j] << "...";
+
         }
-        errorLog << "\n";
+        errorLog << endl;
     }
 
-    return true;
+    bool notCheckMate = false;
+
+    if(kingHasMoves(board)){
+        notCheckMate = true;
+    }
+    else {
+
+        for (int i = 0; i < 8 && !notCheckMate; i++) {
+            for (int j = 0; j < 8 && !notCheckMate; j++) {
+                if (mvTrack[i][j] > 1000) {
+                    notCheckMate = true;
+                }
+            }
+        }
+    }
+
+    return !notCheckMate;
 
 }
 
@@ -589,6 +689,56 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
         checkY = kingLocY - 2;
         checkX = kingLocX - 1;
         errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+
+    if (indExists(kingLocY - 1) && board[kingLocY - 1][kingLocX] == 5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && board[kingLocY + 1][kingLocX] == 5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocX - 1) && board[kingLocY][kingLocX - 1] == 5) {
+        checkY = kingLocY;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocX + 1) && board[kingLocY][kingLocX + 1] == 5) {
+        checkY = kingLocY;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+
+    if (indExists(kingLocY - 1) && indExists(kingLocX - 1) && board[kingLocY - 1][kingLocX - 1] == 5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX - 1) && board[kingLocY + 1][kingLocX - 1] == 5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX + 1) && board[kingLocY + 1][kingLocX + 1] == 5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX + 1) && board[kingLocY - 1][kingLocX + 1] == 5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
         return true;
     }
 
@@ -1553,22 +1703,21 @@ int main() {
             {-1,-2,-3,-4,-5,-3,-2,-1},
             {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 3},
+            {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
     };*/
-
     int board[8][8] = {
-            {0, 0, 0, -5, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, -4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 5, 0, -5},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 6, 1, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0}
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, 0, 0, 0}
     };
 
     int movedCells[8][8] = {0};
@@ -1697,14 +1846,16 @@ int main() {
                     cout << "CHECKMATE!" << endl;
                 }
                 else {
-                    cout << "BLACK IN CHECK" << endl;
+                    gotoxy(102, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECK" << endl;
                 }
             }
             else {
-                gotoxy(102, 2);
+                gotoxy(102, 3);
 
                 SetConsoleTextAttribute(h, 0);
-                cout << "BLACK IN CHECK" << endl;
+                cout << "CHECK" << endl;
             }
 
             gotoxy(85, 2);
