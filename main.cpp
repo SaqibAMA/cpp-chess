@@ -175,15 +175,12 @@ bool isKingMove(int board[][8], int tempBoard[][8], int srcX, int srcY, int dest
             tempBoard[destY][destX] = tempBoard[srcY][srcX];
             tempBoard[srcY][srcX] = 0;
 
-            if (kingInCheckB(tempBoard, checkX, checkY)) {
-                tempBoard[srcY][srcY] = tempBoard[destY][destX];
-                tempBoard[destY][destX] = 0;
-                return false;
-            } else {
-                tempBoard[srcY][srcY] = tempBoard[destY][destX];
-                tempBoard[destY][destX] = 0;
-                return true;
-            }
+            bool kInCheck = kingInCheckB(tempBoard, checkX, checkY);
+
+            tempBoard[srcY][srcY] = tempBoard[destY][destX];
+            tempBoard[destY][destX] = 0;
+
+            return !kInCheck && checkX != -1 && checkY != -1;
 
         }
     }
@@ -197,6 +194,9 @@ bool kingHasMoves(int board[][8]) {
 
     // Copying the board
     int tempBoard[8][8];
+
+    ofstream test;
+    test.open("kingMovesLog.txt");
 
     int kingLocX = 4, kingLocY = 0;
 
@@ -214,6 +214,15 @@ bool kingHasMoves(int board[][8]) {
         }
     }
 
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) << endl;
+    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1) << endl;
+
     if (isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
     isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
     isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) ||
@@ -225,7 +234,7 @@ bool kingHasMoves(int board[][8]) {
         return true;
     }
 
-    return true;
+    return false;
 
 }
 
@@ -716,7 +725,6 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
         errorLog << "In check from King." << endl;
         return true;
     }
-
     if (indExists(kingLocY - 1) && indExists(kingLocX - 1) && board[kingLocY - 1][kingLocX - 1] == 5) {
         checkY = kingLocY - 1;
         checkX = kingLocX - 1;
@@ -881,6 +889,7 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
         i++;
     }
 
+    checkX = -1, checkY = -1;
     return false;
 }
 
@@ -1754,6 +1763,54 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
     return false;
 }
 
+bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn) {
+
+    ofstream test;
+    test.open("kingMovesLog.txt");
+
+    int tempBoard[8][8] = {0};
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+
+            tempBoard[i][j] = board[i][j];
+
+        }
+    }
+
+    if(turn == 1) {
+
+        int checkX = -1, checkY = -1;
+
+        tempBoard[destY][destX] = tempBoard[srcY][srcX];
+        tempBoard[srcY][srcX] = 0;
+
+        bool kInCheck = kingInCheckB(tempBoard, checkX, checkY);
+
+        test << !kInCheck << " " << checkX << checkY << endl;
+
+        return !kInCheck;
+
+    }
+    if (turn == 0) {
+
+        int checkX = -1, checkY = -1;
+
+        tempBoard[destY][destX] = tempBoard[srcY][srcX];
+        tempBoard[srcY][srcX] = 0;
+
+        bool kInCheck = kingInCheckB(tempBoard, checkX, checkY);
+
+        test << !kInCheck << " " << checkX << checkY << endl;
+
+        return !kInCheck;
+
+    }
+
+    return true;
+
+}
+
 void timer() {
 
     clock_t t = clock();
@@ -1787,7 +1844,7 @@ int main() {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 5, 0, -5},
             {0, 6, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, -1, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
@@ -1823,6 +1880,10 @@ int main() {
 
     gotoxy(80, 5);
     cout << ":: BEST MOVE ::" << endl;
+
+    gotoxy(80, 10);
+    cout << ":: CURRENT TURN ::";
+
     gotoxy(0, 0);
 
     while (moveCounter < INT_MAX) {
@@ -1877,10 +1938,31 @@ int main() {
         chessCordToIndex(destCell, destX, destY)) &&
         !isEmpty(board[srcY][srcX]) &&
         !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
+        isLegal(board, srcX, srcY, destX, destY, turn) &&
         movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle, movedCells)) {
 
             moveCounter++;
             turn = (moveCounter % 2);
+
+
+            gotoxy(85, 12);
+            if (turn == 0) {
+                SetConsoleTextAttribute(h, 0);
+                cout << "BLACK" << endl;
+                gotoxy(85, 12);
+                SetConsoleTextAttribute(h, 11);
+                cout << "WHITE" << endl;
+            }
+            else {
+                SetConsoleTextAttribute(h, 0);
+                cout << "WHITE" << endl;
+                gotoxy(85, 12);
+                SetConsoleTextAttribute(h, 11);
+                cout << "BLACK" << endl;
+            }
+
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
 
             movedCells[srcY][srcX] += 1;
 
@@ -1913,11 +1995,12 @@ int main() {
 
             if(kingInCheckB(board, checkX, checkY)) {
 
-                gotoxy(102, 2);
-                SetConsoleTextAttribute(h, FOREGROUND_RED);
-
                 if (kingInCheckMateB(board, checkX, checkY)){
+                    gotoxy(102, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
                     cout << "CHECKMATE!" << endl;
+                    currentGameFile << "CHECKMATE!" << endl;
+                    SetConsoleTextAttribute(h, 15);
                 }
                 else {
                     gotoxy(102, 3);
