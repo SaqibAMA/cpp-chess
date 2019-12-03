@@ -884,6 +884,64 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
     return false;
 }
 
+void pawnPromotion(int board[][8], int srcX, int srcY) {
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    gotoxy(0, 26);
+
+    char choice;
+    cout << "Would you like to promote the pawn? (y or n) ";
+    cin >> choice;
+
+    gotoxy(0, 26);
+    SetConsoleTextAttribute(h, 0);
+    cout << "Would you like to promote the pawn? (y or n) " << choice;
+    SetConsoleTextAttribute(h, 15);
+
+    if (choice == 'y' || choice == 'Y') {
+
+        gotoxy(0, 27);
+        cout << "Which piece would you like to promote your pawn to? (r, n, b, q) ";
+        cin >> choice;
+
+        if ((board[srcY][srcX] > 0 && choice >= 'a' && choice <= 'z') || (board[srcY][srcX] < 0 && choice >= 'A' && choice <= 'Z')) {
+
+            if (choice == 'r') {
+                board[srcY][srcX] = 1;
+            }
+            else if (choice == 'n') {
+                board[srcY][srcX] = 2;
+            }
+            else if (choice == 'b') {
+                board[srcY][srcX] = 3;
+            }
+            else if (choice == 'q') {
+                board[srcY][srcX] = 4;
+            }
+            else if (choice == 'R') {
+                board[srcY][srcX] = -1;
+            }
+            else if (choice == 'N') {
+                board[srcY][srcX] = -2;
+            }
+            else if (choice == 'B') {
+                board[srcY][srcX] = -3;
+            }
+            else if (choice == 'Q') {
+                board[srcY][srcX] = -4;
+            }
+        }
+
+        gotoxy(0, 27);
+        SetConsoleTextAttribute(h, 0);
+        cout << "Which piece would you like to promote your pawn to? (r, n, b, q) " << choice;
+    }
+
+    SetConsoleTextAttribute(h, 15);
+
+}
+
 bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle, int movedCells[][8]) {
 
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -904,6 +962,10 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
 
+                if (srcY == 1 && destY == 0) {
+                    pawnPromotion(board, destX, destY);
+                }
+
                 return true;
             }
             else if (((srcX == destX - 1) || (srcX == destX + 1)) &&
@@ -912,6 +974,10 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
+
+                if (srcY == 1 && destY == 0) {
+                    pawnPromotion(board, destX, destY);
+                }
 
                 return true;
             }
@@ -1298,6 +1364,10 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
 
+                if (srcY == 6 && destY == 7) {
+                    pawnPromotion(board, destX, destY);
+                }
+
                 return true;
             }
             else if (((srcX == destX - 1) || (srcX == destX + 1)) &&
@@ -1306,6 +1376,10 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
                 board[destY][destX] = board[srcY][srcX];
                 board[srcY][srcX] = 0;
+
+                if (srcY == 6 && destY == 7) {
+                    pawnPromotion(board, destX, destY);
+                }
 
                 return true;
             }
@@ -1712,7 +1786,7 @@ int main() {
     int board[8][8] = {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 5, 0, -5},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 6, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
