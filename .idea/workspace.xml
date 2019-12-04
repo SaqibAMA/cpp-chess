@@ -14,11 +14,10 @@
     <list default="true" id="aada5b0b-ad55-4aac-b605-b12e2928321e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/main.cpp.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/cpp_chess.dir/objects.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cpp_chess.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/currentGameMoves.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/dataLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/dataLog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/errorLog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/kingMovesLog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/kingMovesLog.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -103,7 +102,7 @@
       <workItem from="1575173442568" duration="21431000" />
       <workItem from="1575308362486" duration="8081000" />
       <workItem from="1575397759584" duration="5972000" />
-      <workItem from="1575463797482" duration="3318000" />
+      <workItem from="1575463797482" duration="7722000" />
     </task>
     <servers />
   </component>

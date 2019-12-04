@@ -24,7 +24,17 @@ bool isKingMove(int board[][8], int tempBoard[][8], int srcX, int srcY, int dest
 void genMoves(int board[][8], int mvTrack[][8]);
 void checkPath(int board[][8], int mvTrack[][8], int checkX, int checkY);
 bool kingInCheckB(int board[][8], int &checkX, int &checkY);
+bool kingInCheckW(int board[][8], int &checkX, int &checkY);
+bool kingInCheckMateB(int board[][8], int checkX, int checkY);
+bool kingInCheckMateW(int board[][8], int checkX, int checkY);
+bool isKingMoveW(int board[][8], int tempBoard[][8], int srcX, int srcY, int destX, int destY);
+bool kingHasMoves(int board[][8]);
+bool kingHasMovesW(int board[][8]);
+void genMovesW(int board[][8], int mvTrack[][8]);
+void checkPathW(int board[][8], int mvTrack[][8], int checkX, int checkY);
 bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &turn, bool &wCanCastle, bool &bCanCastle, int movedCells[][8]);
+void pawnPromotion(int board[][8], int srcX, int srcY);
+bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn);
 
 
 char printPiece(int pieceCode) {
@@ -190,6 +200,35 @@ bool isKingMove(int board[][8], int tempBoard[][8], int srcX, int srcY, int dest
 
 }
 
+bool isKingMoveW(int board[][8], int tempBoard[][8], int srcX, int srcY, int destX, int destY) {
+
+    if (indExists(destY) && indExists(destX)) {
+        if (hasSamePiece(board[srcY][srcX], board[destY][destX]) && !isEmpty(board[destY][destX])) {
+
+            return false;
+
+        } else {
+
+            int checkX = -1, checkY = -1;
+
+            tempBoard[destY][destX] = tempBoard[srcY][srcX];
+            tempBoard[srcY][srcX] = 0;
+
+            bool kInCheck = kingInCheckW(tempBoard, checkX, checkY);
+
+            tempBoard[srcY][srcY] = tempBoard[destY][destX];
+            tempBoard[destY][destX] = 0;
+
+            return !kInCheck && checkX != -1 && checkY != -1;
+
+        }
+    }
+    else {
+        return false;
+    }
+
+}
+
 bool kingHasMoves(int board[][8]) {
 
     // Copying the board
@@ -234,6 +273,50 @@ bool kingHasMoves(int board[][8]) {
 
 }
 
+bool kingHasMovesW(int board[][8]) {
+
+    // Copying the board
+    int tempBoard[8][8];
+
+    ofstream test;
+    test.open("kingMovesLog.txt");
+
+    int kingLocX = 4, kingLocY = 7;
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+
+            tempBoard[i][j] = board[i][j];
+            if (board[i][j] == 5) {
+
+                kingLocX = j;
+                kingLocY = i;
+
+            }
+
+        }
+    }
+
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) << endl;
+    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1) << endl;
+
+    return isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) ||
+           isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1);
+
+}
+
 void genMoves(int board[][8], int mvTrack[][8]){
 
     ofstream data;
@@ -245,27 +328,27 @@ void genMoves(int board[][8], int mvTrack[][8]){
 
             if (board[i][j] == -6) {
 
-                if (isEmpty(board[i + 1][j])) {
+                if (indExists(i + 1) && isEmpty(board[i + 1][j])) {
                     mvTrack[i + 1][j] += 1;
 
-                    if (isEmpty(board[i + 2][j]) && i == 1) {
+                    if (indExists(i + 2) && isEmpty(board[i + 2][j]) && i == 1) {
                         mvTrack[i + 2][j] += 1;
                     }
 
                 }
-                if (!isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
+                if (indExists(i + 1) && indExists(j + 1) && !isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
                     mvTrack[i + 1][j + 1] += 1;
                 }
-                if (!isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
+                if (indExists(i + 1) && indExists(j + 1) && !isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
                     mvTrack[i + 1][j - 1] += 1;
                 }
 
             }
             data << "Pawns" << endl;
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
 
-                    data << mvTrack[i][j] << "...";
+                    data << mvTrack[k][j] << "...";
 
                 }
                 data << endl;
@@ -349,10 +432,10 @@ void genMoves(int board[][8], int mvTrack[][8]){
             }
 
             data << "Rook and Queen" << endl;
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
 
-                    data << mvTrack[i][j] << "...";
+                    data << mvTrack[k][j] << "...";
 
                 }
                 data << endl;
@@ -389,10 +472,10 @@ void genMoves(int board[][8], int mvTrack[][8]){
             }
 
             data << "Knights" << endl;
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
 
-                    data << mvTrack[i][j] << "...";
+                    data << mvTrack[k][j] << "...";
 
                 }
                 data << endl;
@@ -474,10 +557,265 @@ void genMoves(int board[][8], int mvTrack[][8]){
 
             }
             data << "Bishops and Queen" << endl;
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
 
-                    data << mvTrack[i][j] << "...";
+                    data << mvTrack[k][j] << "...";
+
+                }
+                data << endl;
+            }
+
+        }
+
+    }
+
+}
+
+void genMovesW(int board[][8], int mvTrack[][8]){
+
+    ofstream data;
+    data.open("dataLog.txt");
+
+    for (int i = 0; i < 8; i++) {
+
+        for (int j = 0; j < 8; j++) {
+
+            if (board[i][j] == 6) {
+
+                if (indExists(i - 1) && isEmpty(board[i - 1][j])) {
+                    mvTrack[i - 1][j] += 1;
+
+                    if (indExists(i - 2) && isEmpty(board[i - 2][j]) && i == 6) {
+                        mvTrack[i - 2][j] += 1;
+                    }
+
+                }
+                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
+                    mvTrack[i + 1][j + 1] += 1;
+                }
+                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
+                    mvTrack[i - 1][j - 1] += 1;
+                }
+
+            }
+            data << "Pawns" << endl;
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
+
+                    data << mvTrack[k][j] << "...";
+
+                }
+                data << endl;
+            }
+            if (board[i][j] == 1 || board[i][j] == 4) {
+
+                int k = 1;
+                bool pathBlocked = false;
+                while (i + k < 8 && !pathBlocked) {
+                    // bottom
+                    if (board[i + k][j] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j] > 0) {
+                        mvTrack[i + k][j] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j + k < 8 && !pathBlocked) {
+                    // right
+                    if (board[i][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i][j + k] > 0) {
+                        mvTrack[i][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (i - k >= 0 && !pathBlocked) {
+                    // top
+                    if (board[i - k][j] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j] > 0) {
+                        mvTrack[i - k][j] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j - k >= 0 && !pathBlocked) {
+                    // left
+                    if (board[i][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i][j - k] > 0) {
+                        mvTrack[i][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+
+
+            }
+
+            data << "Rook and Queen" << endl;
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
+
+                    data << mvTrack[k][j] << "...";
+
+                }
+                data << endl;
+            }
+
+            if (board[i][j] == 2) {
+
+                if (indExists(i - 2) && indExists(j + 1) && (!hasSamePiece(board[i][j], board[i - 2][j + 1]) || isEmpty(board[i - 2][j + 1]))) {
+                    mvTrack[i - 2][j + 1] += 1;
+                }
+                if (indExists(i - 2) && indExists(j - 1) && (!hasSamePiece(board[i][j], board[i - 2][j - 1]) || isEmpty(board[i - 2][j - 1]))) {
+                    mvTrack[i - 2][j - 1] += 1;
+                }
+                if (indExists(i - 1) && indExists(j + 2) && (!hasSamePiece(board[i][j], board[i - 1][j + 2]) || isEmpty(board[i - 1][j + 2]))) {
+                    mvTrack[i - 1][j + 2] += 1;
+                }
+                if (indExists(i - 1) && indExists(j - 2) && (!hasSamePiece(board[i][j], board[i - 1][j - 2]) || isEmpty(board[i - 1][j - 2]))) {
+                    mvTrack[i - 1][j - 2] += 1;
+                }
+
+                if (indExists(i + 2) && indExists(j + 1) && (!hasSamePiece(board[i][j], board[i + 2][j + 1]) || isEmpty(board[i + 2][j + 1]))) {
+                    mvTrack[i + 2][j + 1] += 1;
+                }
+                if (indExists(i + 2) && indExists(j - 1) && (!hasSamePiece(board[i][j], board[i + 2][j - 1]) || isEmpty(board[i + 2][j - 1]))) {
+                    mvTrack[i + 2][j - 1] += 1;
+                }
+                if (indExists(i + 1) && indExists(j + 2) && (!hasSamePiece(board[i][j], board[i + 1][j + 2]) || isEmpty(board[i + 1][j + 2]))) {
+                    mvTrack[i + 1][j + 2] += 1;
+                }
+                if (indExists(i + 1) && indExists(j - 2) && (!hasSamePiece(board[i][j], board[i + 1][j - 2]) || isEmpty(board[i + 1][j - 2]))) {
+                    mvTrack[i + 1][j - 2] += 1;
+                }
+
+            }
+
+            data << "Knights" << endl;
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
+
+                    data << mvTrack[k][j] << "...";
+
+                }
+                data << endl;
+            }
+
+            if (board[i][j] == 3 || board[i][j] == 4) {
+
+                int k = 1;
+                bool pathBlocked = false;
+                while (i + k < 8 && !pathBlocked) {
+                    // bottom right
+                    if (board[i + k][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j + k] > 0) {
+                        mvTrack[i + k][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j + k < 8 && !pathBlocked) {
+                    // top right
+                    if (board[i - k][j + k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j + k] > 0) {
+                        mvTrack[i - k][j + k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j + k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (i - k >= 0 && !pathBlocked) {
+                    // top left
+                    if (board[i - k][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i - k][j - k] > 0) {
+                        mvTrack[i - k][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i - k][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+                k = 1;
+                pathBlocked = false;
+                while (j - k >= 0 && !pathBlocked) {
+                    // bottom left
+                    if (board[i + k][j - k] < 0) {
+                        pathBlocked = true;
+                    }
+                    else if (board[i + k][j - k] > 0) {
+                        mvTrack[i + k][j - k] += 1;
+                        pathBlocked = true;
+                    }
+                    else {
+                        mvTrack[i + k][j - k] += 1;
+                    }
+
+                    k++;
+                }
+
+            }
+            data << "Bishops and Queen" << endl;
+            for (int k = 0; k < 8; k++) {
+                for (int l = 0; j < 8; j++) {
+
+                    data << mvTrack[k][j] << "...";
 
                 }
                 data << endl;
@@ -613,6 +951,130 @@ void checkPath(int board[][8], int mvTrack[][8], int checkX, int checkY) {
 
 }
 
+void checkPathW(int board[][8], int mvTrack[][8], int checkX, int checkY) {
+
+
+    // Finding the king!
+    bool kingFound = false;
+    int kingLocX = 4, kingLocY = 7;
+
+    for (int i = 0; i < 8 && !kingFound; i++) {
+        for (int j = 0; j < 8 && !kingFound; j++) {
+
+            if (board[i][j] == 5) {
+                kingLocX = j;
+                kingLocY = i;
+                kingFound = true;
+            }
+
+        }
+    }
+
+    if (board[checkY][checkX] == -6) {
+        mvTrack[checkY][checkX] = 1000;
+    }
+    if (board[checkY][checkX] == -1 || board[checkY][checkX] == -4) {
+
+        if (checkX == kingLocX) {
+
+            // The check is from top or bottom
+
+            if (kingLocY < checkY) {
+                // The check is downwards
+
+                int i = 1;
+                while (kingLocY + i <= checkY) {
+                    mvTrack[kingLocY + i][kingLocX] = 1000;
+                    i++;
+                }
+
+            }
+            if (kingLocY > checkY) {
+                // The check is upwards
+                int i = 1;
+                while (kingLocY - i >= checkY) {
+                    mvTrack[kingLocY - i][kingLocX] = 1000;
+                    i++;
+                }
+
+            }
+
+        }
+        else if (checkY == kingLocY) {
+
+            // The check is from right or left
+
+            if (kingLocX < checkX) {
+                // The check is right
+
+                int i = 1;
+                while (kingLocX + i <= checkX) {
+                    mvTrack[kingLocY][kingLocX + i] = 1000;
+                    i++;
+                }
+
+            }
+            if (kingLocX > checkX) {
+                // The check is left
+                int i = 1;
+                while (kingLocX - i >= checkX) {
+                    mvTrack[kingLocY][kingLocX - i] = 1000;
+                    i++;
+                }
+
+            }
+
+        }
+
+    }
+    if (board[checkY][checkX] == -3 || board[checkY][checkX] == -4) {
+
+        if (kingLocX < checkX && kingLocY < checkY) {
+            // bottom right
+            int i = 1;
+            while (kingLocX + i <= checkX) {
+                mvTrack[kingLocY + i][kingLocX + i] = 1000;
+                i++;
+            }
+
+        }
+        else if (kingLocX > checkX && kingLocY < checkY) {
+            // bottom left
+            int i = 1;
+            while (kingLocX - i >= checkX) {
+                mvTrack[kingLocY + i][kingLocX - i] = 1000;
+                i++;
+            }
+
+        }
+        else if (kingLocX > checkX && kingLocY > checkY) {
+            // top left
+            int i = 1;
+            while (kingLocX - i >= checkX) {
+                mvTrack[kingLocY - i][kingLocX - i] = 1000;
+                i++;
+            }
+
+        }
+        else if (kingLocX < checkX && kingLocY > checkY) {
+            // top right
+            int i = 1;
+            while (kingLocX + i <= checkX) {
+                mvTrack[kingLocY - i][kingLocX + i] = 1000;
+                i++;
+            }
+
+        }
+
+    }
+    if (board[checkY][checkX] == -2) {
+
+        mvTrack[checkY][checkX] = 1000;
+
+    }
+
+}
+
 bool kingInCheckMateB(int board[][8], int checkX, int checkY) {
 
     int mvTrack[8][8] = {0};
@@ -624,6 +1086,34 @@ bool kingInCheckMateB(int board[][8], int checkX, int checkY) {
     bool notCheckMate = false;
 
     if(kingHasMoves(board)){
+        notCheckMate = true;
+    }
+    else {
+
+        for (int i = 0; i < 8 && !notCheckMate; i++) {
+            for (int j = 0; j < 8 && !notCheckMate; j++) {
+                if (mvTrack[i][j] > 1000) {
+                    notCheckMate = true;
+                }
+            }
+        }
+    }
+
+    return !notCheckMate;
+
+}
+
+bool kingInCheckMateW(int board[][8], int checkX, int checkY) {
+
+    int mvTrack[8][8] = {0};
+
+    checkPathW(board, mvTrack, checkX, checkY);
+
+    genMovesW(board, mvTrack);
+
+    bool notCheckMate = false;
+
+    if(kingHasMovesW(board)){
         notCheckMate = true;
     }
     else {
@@ -904,6 +1394,284 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
     while (kingLocY - i >= 0 && kingLocX - i >= 0 && !pathBlocked) {
 
         if (board[kingLocY - i][kingLocX - i] == 3 || board[kingLocY - i][kingLocX - i] == 4) {
+            checkY = kingLocY - i;
+            checkX = kingLocX - i;
+            errorLog << "In Check from Bishop Top Left." << endl;
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX - i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    return false;
+}
+
+bool kingInCheckW(int board[][8], int &checkX, int &checkY) {
+
+    // Error tracking file
+
+    ofstream errorLog;
+    errorLog.open("errorLog.txt");
+
+    errorLog << "Program Log\n\n";
+
+    // finding king
+
+    bool kingFound = false;
+    int kingLocY = 7, kingLocX = 4;
+
+    for (int i = 0; i < 8 && !kingFound; i++) {
+        for (int j = 0; j < 8 && !kingFound; j++) {
+
+            kingFound = (board[i][j] == 5);
+            kingLocY = i;
+            kingLocX = j;
+
+        }
+    }
+
+    gotoxy(80, 30);
+
+    if (indExists(kingLocY - 1) && indExists(kingLocX + 1) && board[kingLocY - 1][kingLocX + 1] == -6) {
+        errorLog << "In Check from Pawn." << endl;
+        checkX = kingLocX + 1;
+        checkY = kingLocY - 1;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX - 1) && board[kingLocY + 1][kingLocX - 1] == -6) {
+        checkX = kingLocX - 1;
+        checkY = kingLocY - 1;
+        errorLog << "In Check from Pawn." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX + 2) && board[kingLocY + 1][kingLocX + 2] == -2) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX + 2;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX - 2) && board[kingLocY + 1][kingLocX - 2] == -2) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX - 2;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 2) && indExists(kingLocX + 1) && board[kingLocY + 2][kingLocX + 1] == -2) {
+        checkY = kingLocY + 2;
+        checkX = kingLocX + 1;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 2) && indExists(kingLocX - 1) && board[kingLocY + 2][kingLocX - 1] == -2) {
+        checkY = kingLocY + 2;
+        checkX = kingLocX - 1;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX + 2) && board[kingLocY - 1][kingLocX + 2] == -2){
+        checkY = kingLocY - 1;
+        checkX = kingLocX + 2;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX - 2) && board[kingLocY - 1][kingLocX - 2] == -2) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX - 2;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 2) && indExists(kingLocX + 1) && board[kingLocY - 2][kingLocX + 1] == -2){
+        checkY = kingLocY - 2;
+        checkX = kingLocX + 1;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 2) && indExists(kingLocX - 1) && board[kingLocY - 2][kingLocX - 1] == -2){
+        checkY = kingLocY - 2;
+        checkX = kingLocX - 1;
+        errorLog << "In Check from Knight." << endl;
+        return true;
+    }
+
+    if (indExists(kingLocY - 1) && board[kingLocY - 1][kingLocX] == -5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && board[kingLocY + 1][kingLocX] == -5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocX - 1) && board[kingLocY][kingLocX - 1] == -5) {
+        checkY = kingLocY;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocX + 1) && board[kingLocY][kingLocX + 1] == -5) {
+        checkY = kingLocY;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX - 1) && board[kingLocY - 1][kingLocX - 1] == -5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX - 1) && board[kingLocY + 1][kingLocX - 1] == -5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX - 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY + 1) && indExists(kingLocX + 1) && board[kingLocY + 1][kingLocX + 1] == -5) {
+        checkY = kingLocY + 1;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+    if (indExists(kingLocY - 1) && indExists(kingLocX + 1) && board[kingLocY - 1][kingLocX + 1] == -5) {
+        checkY = kingLocY - 1;
+        checkX = kingLocX + 1;
+        errorLog << "In check from King." << endl;
+        return true;
+    }
+
+    // Check by Rook
+    int i = 1;
+    bool pathBlocked = false;
+    while (kingLocX + i < 8 && !pathBlocked) {
+
+        if (board[kingLocY][kingLocX + i] == -1 || board[kingLocY][kingLocX + i] == -4) {
+            errorLog << "In Check from Rook Right." << endl;
+            checkY = kingLocY;
+            checkX = kingLocX + i;
+            return true;
+        }
+        else if (board[kingLocY][kingLocX + i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocX - i >= 0 && !pathBlocked) {
+
+        if (board[kingLocY][kingLocX - i] == -1 || board[kingLocY][kingLocX - i] == -4) {
+            checkY = kingLocY;
+            checkX = kingLocX - i;
+            errorLog << "In Check from Rook Left." << endl;
+            return true;
+        }
+        else if (board[kingLocY][kingLocX - i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY + i < 8 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX] == -1 || board[kingLocY + i][kingLocX] == -4) {
+            checkY = kingLocY + i;
+            checkX = kingLocX;
+            errorLog << "In Check from Rook Bottom." << endl;
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY - i >= 0 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX] == -1 || board[kingLocY - i][kingLocX] == -4) {
+            checkY = kingLocY - i;
+            checkX = kingLocX;
+            errorLog << "In Check from Rook Top." << endl;
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+
+    // Check by Bishop
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY + i < 8 && kingLocX + i < 8 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX + i] == -3 || board[kingLocY + i][kingLocX + i] == -4) {
+            checkY = kingLocY + i;
+            checkX = kingLocX + i;
+            errorLog << "In Check from Bishop Bottom Right." << endl;
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX + i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY + i < 8 && kingLocX - i >= 0 && !pathBlocked) {
+
+        if (board[kingLocY + i][kingLocX - i] == -3 || board[kingLocY + i][kingLocX - i] == -4) {
+            checkY = kingLocY + i;
+            checkX = kingLocX - i;
+            errorLog << "In Check from Bishop Bottom Left." << endl;
+            return true;
+        }
+        else if (board[kingLocY + i][kingLocX - i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY - i >= 0 && kingLocX + i < 8 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX + i] == -3 || board[kingLocY - i][kingLocX + i] == -4) {
+            checkY = kingLocY - i;
+            checkX = kingLocX + i;
+            errorLog << "In Check from Bishop Top Right." << endl;
+            return true;
+        }
+        else if (board[kingLocY - i][kingLocX + i] != 0) {
+            pathBlocked = true;
+        }
+
+        i++;
+    }
+
+    i = 1;
+    pathBlocked = false;
+    while (kingLocY - i >= 0 && kingLocX - i >= 0 && !pathBlocked) {
+
+        if (board[kingLocY - i][kingLocX - i] == -3 || board[kingLocY - i][kingLocX - i] == -4) {
             checkY = kingLocY - i;
             checkX = kingLocX - i;
             errorLog << "In Check from Bishop Top Left." << endl;
@@ -1791,9 +2559,6 @@ bool movePiece(int board[][8], int srcX, int srcY, int destX, int destY, int &tu
 
 bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn) {
 
-    ofstream test;
-    test.open("kingMovesLog.txt");
-
     int tempBoard[8][8] = {0};
 
     for (int i = 0; i < 8; i++) {
@@ -1813,23 +2578,19 @@ bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn)
 
         bool kInCheck = kingInCheckB(tempBoard, checkX, checkY);
 
-        test << !kInCheck << " " << checkX << checkY << endl;
-
         return !kInCheck;
 
     }
     if (turn == 0) {
 
-        /*int checkX = -1, checkY = -1;
+        int checkX = -1, checkY = -1;
 
         tempBoard[destY][destX] = tempBoard[srcY][srcX];
         tempBoard[srcY][srcX] = 0;
 
-        bool kInCheck = kingInCheckB(tempBoard, checkX, checkY);
+        bool kInCheck = kingInCheckW(tempBoard, checkX, checkY);
 
-        test << !kInCheck << " " << checkX << checkY << endl;
-
-        return !kInCheck;*/
+        return !kInCheck;
         return true;
 
     }
@@ -1868,12 +2629,12 @@ int main() {
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
     /*int board[8][8] = {
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 5, 0, -5},
+            {0, 0, 0, 5, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0, -6, 0, 0},
             {0, 6, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, -1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, -1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, -3},
+            {0, 0, 0, -5, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0}
     };*/
@@ -2023,24 +2784,43 @@ int main() {
             if(kingInCheckB(board, checkX, checkY)) {
 
                 if (kingInCheckMateB(board, checkX, checkY)){
-                    gotoxy(102, 4);
+                    gotoxy(104, 4);
                     SetConsoleTextAttribute(h, FOREGROUND_RED);
-                    cout << "CHECKMATE!" << endl;
-                    currentGameFile << "CHECKMATE!" << endl;
+                    cout << "CHECKMATE! WHITE WINS!" << endl;
+                    gotoxy(104, 5);
+                    cout << "WHITE WINS!" << endl;
                     SetConsoleTextAttribute(h, 15);
                 }
                 else {
-                    gotoxy(102, 3);
+                    gotoxy(104, 3);
                     SetConsoleTextAttribute(h, FOREGROUND_RED);
-                    cout << "CHECK" << endl;
+                    cout << "KING IN CHECK!" << endl;
+                }
+            }
+            else if(kingInCheckW(board, checkX, checkY)) {
+                if (kingInCheckMateW(board, checkX, checkY)){
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECKMATE!" << endl;
+                    gotoxy(104, 5);
+                    cout << "BLACK WINS!" << endl;
+                    SetConsoleTextAttribute(h, 15);
+                }
+                else {
+                    gotoxy(104, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "KING IN CHECK!" << endl;
                 }
             }
             else {
-                gotoxy(102, 3);
+
+                gotoxy(104, 3);
 
                 SetConsoleTextAttribute(h, 0);
-                cout << "CHECK" << endl;
+                cout << "KING IN CHECK!" << endl;
             }
+
+
 
             gotoxy(85, 2);
             SetConsoleTextAttribute(h, 11);

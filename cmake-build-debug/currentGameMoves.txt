@@ -4,5 +4,4 @@ d1d3
 d8d6
 d3h3
 d6h6
-CHECKMATE!
 h3c8
