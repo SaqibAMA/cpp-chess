@@ -223,22 +223,21 @@ bool kingHasMoves(int board[][8]) {
     test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) << endl;
     test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1) << endl;
 
-    if (isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) ||
-    isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1)) {
-        return true;
-    }
-
-    return false;
+    return isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) ||
+           isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1);
 
 }
 
 void genMoves(int board[][8], int mvTrack[][8]){
+
+    ofstream data;
+    data.open("dataLog.txt");
 
     for (int i = 0; i < 8; i++) {
 
@@ -261,6 +260,15 @@ void genMoves(int board[][8], int mvTrack[][8]){
                     mvTrack[i + 1][j - 1] += 1;
                 }
 
+            }
+            data << "Pawns" << endl;
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+
+                    data << mvTrack[i][j] << "...";
+
+                }
+                data << endl;
             }
             if (board[i][j] == -1 || board[i][j] == -4) {
 
@@ -339,35 +347,57 @@ void genMoves(int board[][8], int mvTrack[][8]){
 
 
             }
+
+            data << "Rook and Queen" << endl;
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+
+                    data << mvTrack[i][j] << "...";
+
+                }
+                data << endl;
+            }
+
             if (board[i][j] == -2) {
 
-                if (!hasSamePiece(board[i][j], board[i - 2][j + 1]) || isEmpty(board[i - 2][j + 1])) {
+                if (indExists(i - 2) && indExists(j + 1) && (!hasSamePiece(board[i][j], board[i - 2][j + 1]) || isEmpty(board[i - 2][j + 1]))) {
                     mvTrack[i - 2][j + 1] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i - 2][j - 1]) || isEmpty(board[i - 2][j - 1])) {
+                if (indExists(i - 2) && indExists(j - 1) && (!hasSamePiece(board[i][j], board[i - 2][j - 1]) || isEmpty(board[i - 2][j - 1]))) {
                     mvTrack[i - 2][j - 1] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i - 1][j + 2]) || isEmpty(board[i - 1][j + 2])) {
+                if (indExists(i - 1) && indExists(j + 2) && (!hasSamePiece(board[i][j], board[i - 1][j + 2]) || isEmpty(board[i - 1][j + 2]))) {
                     mvTrack[i - 1][j + 2] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i - 1][j - 2]) || isEmpty(board[i - 1][j - 2])) {
+                if (indExists(i - 1) && indExists(j - 2) && (!hasSamePiece(board[i][j], board[i - 1][j - 2]) || isEmpty(board[i - 1][j - 2]))) {
                     mvTrack[i - 1][j - 2] += 1;
                 }
 
-                if (!hasSamePiece(board[i][j], board[i + 2][j + 1]) || isEmpty(board[i + 2][j + 1])) {
+                if (indExists(i + 2) && indExists(j + 1) && (!hasSamePiece(board[i][j], board[i + 2][j + 1]) || isEmpty(board[i + 2][j + 1]))) {
                     mvTrack[i + 2][j + 1] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i + 2][j - 1]) || isEmpty(board[i + 2][j - 1])) {
+                if (indExists(i + 2) && indExists(j - 1) && (!hasSamePiece(board[i][j], board[i + 2][j - 1]) || isEmpty(board[i + 2][j - 1]))) {
                     mvTrack[i + 2][j - 1] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i + 1][j + 2]) || isEmpty(board[i + 1][j + 2])) {
+                if (indExists(i + 1) && indExists(j + 2) && (!hasSamePiece(board[i][j], board[i + 1][j + 2]) || isEmpty(board[i + 1][j + 2]))) {
                     mvTrack[i + 1][j + 2] += 1;
                 }
-                if (!hasSamePiece(board[i][j], board[i + 1][j - 2]) || isEmpty(board[i + 1][j - 2])) {
+                if (indExists(i + 1) && indExists(j - 2) && (!hasSamePiece(board[i][j], board[i + 1][j - 2]) || isEmpty(board[i + 1][j - 2]))) {
                     mvTrack[i + 1][j - 2] += 1;
                 }
 
             }
+
+            data << "Knights" << endl;
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+
+                    data << mvTrack[i][j] << "...";
+
+                }
+                data << endl;
+            }
+
             if (board[i][j] == -3 || board[i][j] == -4) {
 
                 int k = 1;
@@ -442,6 +472,15 @@ void genMoves(int board[][8], int mvTrack[][8]){
                     k++;
                 }
 
+            }
+            data << "Bishops and Queen" << endl;
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+
+                    data << mvTrack[i][j] << "...";
+
+                }
+                data << endl;
             }
 
         }
@@ -578,21 +617,9 @@ bool kingInCheckMateB(int board[][8], int checkX, int checkY) {
 
     int mvTrack[8][8] = {0};
 
-    ofstream errorLog;
-    errorLog.open("dataLog.txt");
-
     checkPath(board, mvTrack, checkX, checkY);
 
     genMoves(board, mvTrack);
-
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-
-            errorLog << mvTrack[i][j] << "...";
-
-        }
-        errorLog << endl;
-    }
 
     bool notCheckMate = false;
 
@@ -623,6 +650,8 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
 
     errorLog << "Program Log\n\n";
 
+    checkX = -1, checkY = -1;
+
     // finding king
 
     bool kingFound = false;
@@ -637,8 +666,6 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
 
         }
     }
-
-    gotoxy(80, 30);
 
     if (indExists(kingLocY + 1) && indExists(kingLocX + 1) && board[kingLocY + 1][kingLocX + 1] == 6) {
         errorLog << "In Check from Pawn." << endl;
@@ -889,7 +916,6 @@ bool kingInCheckB(int board[][8], int &checkX, int &checkY) {
         i++;
     }
 
-    checkX = -1, checkY = -1;
     return false;
 }
 
@@ -1794,7 +1820,7 @@ bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn)
     }
     if (turn == 0) {
 
-        int checkX = -1, checkY = -1;
+        /*int checkX = -1, checkY = -1;
 
         tempBoard[destY][destX] = tempBoard[srcY][srcX];
         tempBoard[srcY][srcX] = 0;
@@ -1803,7 +1829,8 @@ bool isLegal(int board[][8], int srcX, int srcY, int destX, int destY, int turn)
 
         test << !kInCheck << " " << checkX << checkY << endl;
 
-        return !kInCheck;
+        return !kInCheck;*/
+        return true;
 
     }
 
@@ -1830,7 +1857,7 @@ void timer() {
 
 int main() {
 
-    /*int board[8][8] = {
+    int board[8][8] = {
             {-1,-2,-3,-4,-5,-3,-2,-1},
             {-6,-6,-6,-6,-6,-6,-6,-6},
             {0, 0, 0, 0, 0, 0, 0, 0},
@@ -1839,8 +1866,8 @@ int main() {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {6, 6, 6, 6, 6, 6, 6, 6},
             {1, 2, 3, 4, 5, 3, 2, 1}
-    };*/
-    int board[8][8] = {
+    };
+    /*int board[8][8] = {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 5, 0, -5},
             {0, 6, 0, 0, 0, 0, 0, 0},
@@ -1849,7 +1876,7 @@ int main() {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {1, 0, 0, 0, 0, 0, 0, 0}
-    };
+    };*/
 
     int movedCells[8][8] = {0};
 

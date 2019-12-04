@@ -1,1 +1,8 @@
-a1h1
+d2d4
+d7d5
+d1d3
+d8d6
+d3h3
+d6h6
+CHECKMATE!
+h3c8
