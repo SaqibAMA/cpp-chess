@@ -12,7 +12,7 @@ using namespace std;
 int main(){
 
     ifstream test;
-    test.open("sampleReplay.txt");
+    test.open("game1.txt");
 
     while (!test.eof()){
 

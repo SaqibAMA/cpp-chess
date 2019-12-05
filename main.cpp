@@ -234,9 +234,6 @@ bool kingHasMoves(int board[][8]) {
     // Copying the board
     int tempBoard[8][8];
 
-    ofstream test;
-    test.open("kingMovesLog.txt");
-
     int kingLocX = 4, kingLocY = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -252,15 +249,6 @@ bool kingHasMoves(int board[][8]) {
 
         }
     }
-
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) << endl;
-    test << isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1) << endl;
 
     return isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
            isKingMove(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
@@ -278,9 +266,6 @@ bool kingHasMovesW(int board[][8]) {
     // Copying the board
     int tempBoard[8][8];
 
-    ofstream test;
-    test.open("kingMovesLog.txt");
-
     int kingLocX = 4, kingLocY = 7;
 
     for (int i = 0; i < 8; i++) {
@@ -296,15 +281,6 @@ bool kingHasMovesW(int board[][8]) {
 
         }
     }
-
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY + 1) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX, kingLocY - 1) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY + 1) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY - 1) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY + 1) << endl;
-    test << isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY - 1) << endl;
 
     return isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX - 1, kingLocY) ||
            isKingMoveW(board, tempBoard, kingLocX, kingLocY, kingLocX + 1, kingLocY) ||
@@ -336,7 +312,7 @@ void genMoves(int board[][8], int mvTrack[][8]){
                     }
 
                 }
-                if (indExists(i + 1) && indExists(j + 1) && !isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
+                if (indExists(i + 1) && indExists(j + 1) && (!isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1]))) {
                     mvTrack[i + 1][j + 1] += 1;
                 }
                 if (indExists(i + 1) && indExists(j + 1) && !isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
@@ -346,15 +322,14 @@ void genMoves(int board[][8], int mvTrack[][8]){
             }
             data << "Pawns" << endl;
             for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
+                for (int l = 0; l < 8; l++) {
 
-                    data << mvTrack[k][j] << "...";
+                    data << mvTrack[k][l] << "...";
 
                 }
                 data << endl;
             }
             if (board[i][j] == -1 || board[i][j] == -4) {
-
                 int k = 1;
                 bool pathBlocked = false;
                 while (i + k < 8 && !pathBlocked) {
@@ -427,18 +402,16 @@ void genMoves(int board[][8], int mvTrack[][8]){
                     k++;
                 }
 
+                data << "Rooks" << endl;
+                for (int k = 0; k < 8; k++) {
+                    for (int l = 0; l < 8; l++) {
 
+                        data << mvTrack[k][l] << "...";
 
-            }
-
-            data << "Rook and Queen" << endl;
-            for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
-
-                    data << mvTrack[k][j] << "...";
-
+                    }
+                    data << endl;
                 }
-                data << endl;
+
             }
 
             if (board[i][j] == -2) {
@@ -473,9 +446,9 @@ void genMoves(int board[][8], int mvTrack[][8]){
 
             data << "Knights" << endl;
             for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
+                for (int l = 0; l < 8; l++) {
 
-                    data << mvTrack[k][j] << "...";
+                    data << mvTrack[k][l] << "...";
 
                 }
                 data << endl;
@@ -555,15 +528,13 @@ void genMoves(int board[][8], int mvTrack[][8]){
                     k++;
                 }
 
-            }
-            data << "Bishops and Queen" << endl;
-            for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
-
-                    data << mvTrack[k][j] << "...";
-
+                data << "Bishops" << endl;
+                for (int k = 0; k < 8; k++) {
+                    for (int l = 0; l < 8; l++) {
+                        data << mvTrack[k][l] << "...";
+                    }
                 }
-                data << endl;
+
             }
 
         }
@@ -583,41 +554,33 @@ void genMovesW(int board[][8], int mvTrack[][8]){
 
             if (board[i][j] == 6) {
 
-                if (indExists(i - 1) && isEmpty(board[i - 1][j])) {
+                if (indExists(i - 1) && isEmpty(board[i - 1][j]) && isLegal(board, i, j, i - 1, j, 0)) {
                     mvTrack[i - 1][j] += 1;
 
-                    if (indExists(i - 2) && isEmpty(board[i - 2][j]) && i == 6) {
+                    if (indExists(i - 2) && isEmpty(board[i - 2][j]) && i == 6 && isLegal(board, i, j, i - 2, j, 0)) {
                         mvTrack[i - 2][j] += 1;
                     }
 
                 }
-                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1])) {
+                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j + 1]) && !hasSamePiece(board[i][j], board[i + 1][j + 1]) && isLegal(board, i, j, i + 1, j + 1, 0)) {
                     mvTrack[i + 1][j + 1] += 1;
                 }
-                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1])) {
+                if (indExists(i - 1) && indExists(j + 1) && !isEmpty(board[i + 1][j - 1]) && !hasSamePiece(board[i][j], board[i + 1][j - 1]) && isLegal(board, i, j, i + 1, j - 1, 0)) {
                     mvTrack[i - 1][j - 1] += 1;
                 }
 
             }
-            data << "Pawns" << endl;
-            for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
 
-                    data << mvTrack[k][j] << "...";
-
-                }
-                data << endl;
-            }
             if (board[i][j] == 1 || board[i][j] == 4) {
 
                 int k = 1;
                 bool pathBlocked = false;
                 while (i + k < 8 && !pathBlocked) {
                     // bottom
-                    if (board[i + k][j] < 0) {
+                    if (board[i + k][j] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i + k][j] > 0) {
+                    else if (board[i + k][j] < 0) {
                         mvTrack[i + k][j] += 1;
                         pathBlocked = true;
                     }
@@ -632,10 +595,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (j + k < 8 && !pathBlocked) {
                     // right
-                    if (board[i][j + k] < 0) {
+                    if (board[i][j + k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i][j + k] > 0) {
+                    else if (board[i][j + k] < 0) {
                         mvTrack[i][j + k] += 1;
                         pathBlocked = true;
                     }
@@ -650,10 +613,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (i - k >= 0 && !pathBlocked) {
                     // top
-                    if (board[i - k][j] < 0) {
+                    if (board[i - k][j] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i - k][j] > 0) {
+                    else if (board[i - k][j] < 0) {
                         mvTrack[i - k][j] += 1;
                         pathBlocked = true;
                     }
@@ -668,10 +631,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (j - k >= 0 && !pathBlocked) {
                     // left
-                    if (board[i][j - k] < 0) {
+                    if (board[i][j - k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i][j - k] > 0) {
+                    else if (board[i][j - k] < 0) {
                         mvTrack[i][j - k] += 1;
                         pathBlocked = true;
                     }
@@ -688,9 +651,9 @@ void genMovesW(int board[][8], int mvTrack[][8]){
 
             data << "Rook and Queen" << endl;
             for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
+                for (int l = 0; l < 8; l++) {
 
-                    data << mvTrack[k][j] << "...";
+                    data << mvTrack[k][l] << "...";
 
                 }
                 data << endl;
@@ -728,9 +691,9 @@ void genMovesW(int board[][8], int mvTrack[][8]){
 
             data << "Knights" << endl;
             for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
+                for (int l = 0; l < 8; l++) {
 
-                    data << mvTrack[k][j] << "...";
+                    data << mvTrack[k][l] << "...";
 
                 }
                 data << endl;
@@ -742,10 +705,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 bool pathBlocked = false;
                 while (i + k < 8 && !pathBlocked) {
                     // bottom right
-                    if (board[i + k][j + k] < 0) {
+                    if (board[i + k][j + k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i + k][j + k] > 0) {
+                    else if (board[i + k][j + k] < 0) {
                         mvTrack[i + k][j + k] += 1;
                         pathBlocked = true;
                     }
@@ -760,10 +723,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (j + k < 8 && !pathBlocked) {
                     // top right
-                    if (board[i - k][j + k] < 0) {
+                    if (board[i - k][j + k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i - k][j + k] > 0) {
+                    else if (board[i - k][j + k] < 0) {
                         mvTrack[i - k][j + k] += 1;
                         pathBlocked = true;
                     }
@@ -778,10 +741,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (i - k >= 0 && !pathBlocked) {
                     // top left
-                    if (board[i - k][j - k] < 0) {
+                    if (board[i - k][j - k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i - k][j - k] > 0) {
+                    else if (board[i - k][j - k] < 0) {
                         mvTrack[i - k][j - k] += 1;
                         pathBlocked = true;
                     }
@@ -796,10 +759,10 @@ void genMovesW(int board[][8], int mvTrack[][8]){
                 pathBlocked = false;
                 while (j - k >= 0 && !pathBlocked) {
                     // bottom left
-                    if (board[i + k][j - k] < 0) {
+                    if (board[i + k][j - k] > 0) {
                         pathBlocked = true;
                     }
-                    else if (board[i + k][j - k] > 0) {
+                    else if (board[i + k][j - k] < 0) {
                         mvTrack[i + k][j - k] += 1;
                         pathBlocked = true;
                     }
@@ -813,9 +776,9 @@ void genMovesW(int board[][8], int mvTrack[][8]){
             }
             data << "Bishops and Queen" << endl;
             for (int k = 0; k < 8; k++) {
-                for (int l = 0; j < 8; j++) {
+                for (int l = 0; l < 8; l++) {
 
-                    data << mvTrack[k][j] << "...";
+                    data << mvTrack[k][l] << "...";
 
                 }
                 data << endl;
@@ -2629,15 +2592,17 @@ int main() {
             {1, 2, 3, 4, 5, 3, 2, 1}
     };
     /*int board[8][8] = {
-            {0, 0, 0, 5, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0, -6, 0, 0},
-            {0, 6, 0, 0, 0, 0, 0, 0},
-            {0, 0, -1, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, -3},
-            {0, 0, 0, -5, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0, 0, 0, 0}
+            {0, 0, 0, 0, 0, -5, 0, 0},
+            {0, -6, 0, 0, 0, 0, 0, 0},
+            {0, 0, 4, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 5, 0, 0},
+            {-1, 0, 0, 0, 0, 0, 0, 0}
     };*/
+
+    int mvTrack[8][8] = {0};
 
     int movedCells[8][8] = {0};
 
@@ -2672,7 +2637,238 @@ int main() {
     gotoxy(80, 10);
     cout << ":: CURRENT TURN ::";
 
+    gotoxy(80, 15);
+    cout << "dddd for draw";
+
     gotoxy(0, 0);
+/*
+
+    while (!savedGame.eof()) {
+
+        printBoard(board);
+
+        char srcCell[3];
+        char destCell[3];
+
+        srcCell[0] = savedGame.get();
+        srcCell[1] = savedGame.get();
+        srcCell[2] = '\0';
+
+        gotoxy(80, 30);
+        cout << srcCell << endl;
+
+        destCell[0] = savedGame.get();
+        destCell[1] = savedGame.get();
+        destCell[2] = '\0';
+
+        savedGame.get();
+
+        gotoxy(0, 0);
+
+        int srcX, srcY, destX, destY;
+
+
+        if ((chessCordToIndex(srcCell, srcX, srcY) &&
+             chessCordToIndex(destCell, destX, destY)) &&
+            !isEmpty(board[srcY][srcX]) &&
+            !hasSamePiece(board[srcY][srcX], board[destY][destX]) &&
+            isLegal(board, srcX, srcY, destX, destY, turn) &&
+            movePiece(board, srcX, srcY, destX, destY, turn, wCanCastle, bCanCastle, movedCells)) {
+
+            moveCounter++;
+            turn = (moveCounter % 2);
+
+
+            gotoxy(85, 12);
+            if (turn == 0) {
+                SetConsoleTextAttribute(h, 0);
+                cout << "BLACK" << endl;
+                gotoxy(85, 12);
+                SetConsoleTextAttribute(h, 11);
+                cout << "WHITE" << endl;
+            }
+            else {
+                SetConsoleTextAttribute(h, 0);
+                cout << "WHITE" << endl;
+                gotoxy(85, 12);
+                SetConsoleTextAttribute(h, 11);
+                cout << "BLACK" << endl;
+            }
+
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
+            movedCells[srcY][srcX] += 1;
+
+            // Prints the previous move in black to erase it
+            gotoxy(85, 2);
+            SetConsoleTextAttribute(h, 0);
+            cout << srcCell << destCell << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
+            (moveCounter > 0)? previousMove += " " + currentMove : previousMove = currentMove;
+
+            string srcAd = srcCell;
+            string destAd = destCell;
+
+            currentMove = srcAd + destAd;
+
+            gotoxy(85, 7);
+            SetConsoleTextAttribute(h, 11);
+
+            // Prints best move on the screen
+            if (moveCounter < 1) {
+                cout << getNextMove(currentMove) << endl;
+            }
+            else {
+                cout << getNextMove(previousMove + " " + currentMove) << endl;
+            }
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
+            if (kingInCheckB(board, checkX, checkY)) {
+                bool isCheck = true, isCheckMate = true, isStaleMate = false;
+
+                checkPath(board, mvTrack, checkX, checkY);
+                genMoves(board, mvTrack);
+
+                isCheckMate = !kingHasMoves(board);
+
+                for (int i = 0; i < 8 && isCheckMate; i++) {
+                    for (int j = 0; j < 8 && isCheckMate; j++) {
+
+                        if (mvTrack[i][j] > 1000) {
+                            isCheckMate = false;
+                        }
+
+                    }
+                }
+
+                if (isCheckMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECKMATE!" << endl;
+                    gotoxy(104, 5);
+                    cout << "WHITE WINS!" << endl;
+                }
+                else {
+                    gotoxy(104, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECK!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+            else {
+
+                int mvTrack[8][8] = {0};
+                bool staleMate = true;
+
+                genMovesW(board, mvTrack);
+
+                for (int i = 0; i < 8 && staleMate; i++) {
+                    for (int j = 0; j < 8 && staleMate; j ++) {
+                        if (mvTrack[i][j] > 0) {
+                            staleMate = false;
+                        }
+                    }
+                }
+
+                if (staleMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "STALEMATE!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+
+            if (kingInCheckW(board, checkX, checkY)) {
+                bool isCheck = true, isCheckMate = true, isStaleMate = false;
+
+                checkPathW(board, mvTrack, checkX, checkY);
+                genMovesW(board, mvTrack);
+
+                isCheckMate = !kingHasMovesW(board);
+
+                for (int i = 0; i < 8 && isCheckMate; i++) {
+                    for (int j = 0; j < 8 && isCheckMate; j++) {
+
+                        if (mvTrack[i][j] > 1000) {
+                            isCheckMate = false;
+                        }
+
+                    }
+                }
+
+                if (isCheckMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECKMATE!" << endl;
+                    gotoxy(104, 5);
+                    cout << "BLACK WINS!" << endl;
+                }
+                else {
+                    gotoxy(104, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECK!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+            else {
+
+                int mvTrack[8][8] = {0};
+                bool staleMate = true;
+
+                genMoves(board, mvTrack);
+
+                for (int i = 0; i < 8 && staleMate; i++) {
+                    for (int j = 0; j < 8 && staleMate; j ++) {
+                        if (mvTrack[i][j] > 0) {
+                            staleMate = false;
+                        }
+                    }
+                }
+
+                if (staleMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "STALEMATE!" << endl;
+                    SetConsoleTextAttribute(h, 15);
+                }
+
+            }
+
+            gotoxy(85, 2);
+            SetConsoleTextAttribute(h, 11);
+            cout << srcCell << destCell;
+
+            currentGameFile << srcCell << destCell << endl;
+
+            gotoxy(4, 25);
+
+            SetConsoleTextAttribute(h, 0);
+            cout << "INVALID MOVE" << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+
+        }
+        else {
+            gotoxy(4, 25);
+
+            SetConsoleTextAttribute(h, FOREGROUND_RED);
+            cout << "INVALID MOVE" << endl;
+            SetConsoleTextAttribute(h, 15);
+            gotoxy(0, 0);
+        }
+
+        gotoxy(0, 0);
+
+        this_thread::sleep_for(chrono::milliseconds(1000));
+    }
+*/
 
     while (moveCounter < INT_MAX) {
 
@@ -2776,12 +2972,145 @@ int main() {
                 cout << getNextMove(currentMove) << endl;
             }
             else {
-                cout << getNextMove(previousMove + " " + currentMove) << endl;
+                string out = getNextMove(previousMove + " " + currentMove);
+                if (out == "(non") {
+                    gotoxy(104, 5);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "GAME ENDS!" << endl;
+                }
+                else {
+
+                    gotoxy(85, 7);
+                    SetConsoleTextAttribute(h, 11);
+                    cout << getNextMove(currentMove) << endl;
+
+                }
+                SetConsoleTextAttribute(h, 15);
             }
+
+            gotoxy(104, 3);
+            SetConsoleTextAttribute(h, 0);
+            cout << "CHECK!" << endl;
+
             SetConsoleTextAttribute(h, 15);
+
             gotoxy(0, 0);
 
-            if(kingInCheckB(board, checkX, checkY)) {
+            if (kingInCheckB(board, checkX, checkY)) {
+                bool isCheck = true, isCheckMate = true, isStaleMate = false;
+
+                checkPath(board, mvTrack, checkX, checkY);
+                genMoves(board, mvTrack);
+
+                isCheckMate = !kingHasMoves(board);
+
+                for (int i = 0; i < 8 && isCheckMate; i++) {
+                    for (int j = 0; j < 8 && isCheckMate; j++) {
+
+                        if (mvTrack[i][j] > 1000) {
+                            isCheckMate = false;
+                        }
+
+                    }
+                }
+
+                if (isCheckMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECKMATE!" << endl;
+                    gotoxy(104, 5);
+                    cout << "WHITE WINS!" << endl;
+                }
+                else {
+                    gotoxy(104, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECK!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+            else {
+
+                int mvTrack[8][8] = {0};
+                bool staleMate = true;
+
+                genMovesW(board, mvTrack);
+
+                for (int i = 0; i < 8 && staleMate; i++) {
+                    for (int j = 0; j < 8 && staleMate; j ++) {
+                        if (mvTrack[i][j] > 0) {
+                            staleMate = false;
+                        }
+                    }
+                }
+
+                if (staleMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "STALEMATE!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+
+            if (kingInCheckW(board, checkX, checkY)) {
+                bool isCheck = true, isCheckMate = true, isStaleMate = false;
+
+                checkPathW(board, mvTrack, checkX, checkY);
+                genMovesW(board, mvTrack);
+
+                isCheckMate = !kingHasMovesW(board);
+
+                for (int i = 0; i < 8 && isCheckMate; i++) {
+                    for (int j = 0; j < 8 && isCheckMate; j++) {
+
+                        if (mvTrack[i][j] > 1000) {
+                            isCheckMate = false;
+                        }
+
+                    }
+                }
+
+                if (isCheckMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECKMATE!" << endl;
+                    gotoxy(104, 5);
+                    cout << "BLACK WINS!" << endl;
+                }
+                else {
+                    gotoxy(104, 3);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "CHECK!" << endl;
+                }
+                SetConsoleTextAttribute(h, 15);
+
+            }
+            else {
+
+                int mvTrack[8][8] = {0};
+                bool staleMate = true;
+
+                genMoves(board, mvTrack);
+
+                for (int i = 0; i < 8 && staleMate; i++) {
+                    for (int j = 0; j < 8 && staleMate; j ++) {
+                        if (mvTrack[i][j] > 0) {
+                            staleMate = false;
+                        }
+                    }
+                }
+
+                if (staleMate) {
+                    gotoxy(104, 4);
+                    SetConsoleTextAttribute(h, FOREGROUND_RED);
+                    cout << "STALEMATE!" << endl;
+                    SetConsoleTextAttribute(h, 15);
+                }
+
+            }
+
+            /*if(kingInCheckB(board, checkX, checkY)) {
 
                 if (kingInCheckMateB(board, checkX, checkY)){
                     gotoxy(104, 4);
@@ -2818,7 +3147,7 @@ int main() {
 
                 SetConsoleTextAttribute(h, 0);
                 cout << "KING IN CHECK!" << endl;
-            }
+            }*/
 
 
 
